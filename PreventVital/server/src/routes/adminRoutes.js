@@ -13,4 +13,10 @@ router.patch('/users/:id/suspend', adminController.updateUserStatus);
 router.get('/config/who-thresholds', adminController.getWhoThresholds);
 router.post('/config/who-thresholds', adminController.updateWhoThresholds);
 
+// Dashboard Routes
+router.get('/stats', adminController.getDashboardStats);
+router.get('/realtime', adminController.getRealtimeMetrics);
+router.get('/alerts', adminController.getCriticalAlerts);
+router.get('/predictions', adminController.getAIPredictions);
+
 module.exports = router;

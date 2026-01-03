@@ -1,11 +1,11 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/AppIcon';
 import AppImage from '@/components/ui/AppImage';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ShopState } from '@/store/shopSlice';
-import { RootState } from '@/store';
+import { RootState, logout } from '@/store';
 
 interface HeaderProps {
   className?: string;
@@ -15,7 +15,17 @@ const Header = ({ className = '' }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const cartItems = useSelector((state: RootState) => state.shop.cart);
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+    setIsMobileMenuOpen(false);
+  };
 
   const primaryNavItems = [
     { label: 'Home', href: '/homepage' },
@@ -115,18 +125,30 @@ const Header = ({ className = '' }: HeaderProps) => {
                 </span>
               )}
             </Link>
-            <Link
-              to="/login"
-              className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="px-4 py-2 text-sm font-semibold text-primary border border-primary/20 hover:bg-primary/5 rounded-lg transition-all duration-300"
-            >
-              Sign Up
-            </Link>
+
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="px-4 py-2 text-sm font-semibold text-primary border border-primary/20 hover:bg-primary/5 rounded-lg transition-all duration-300"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
             <Link
               to="/ai-health-assessment"
               className="px-4 py-2 text-sm font-semibold text-accent-foreground bg-accent hover:bg-accent/90 rounded-lg transition-all duration-300 hover:scale-105 shadow-sm"
@@ -192,7 +214,7 @@ const Header = ({ className = '' }: HeaderProps) => {
           </div>
         )}
       </div>
-    </header>
+    </header >
   );
 };
 

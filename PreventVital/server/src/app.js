@@ -33,11 +33,6 @@ app.use('/api/creator', creatorRoutes);
 app.use('/api/corporate', corporateRoutes);
 
 // Database Connection
-mongoose.connect(process.env.DATABASE || 'mongodb://localhost:27017/preventvital', {
-    // Options if needed
-}).then(() => console.log('DB connection successful')).catch(err => console.error(err));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}...`);
-});
+// Export app for server.js
+module.exports = app;

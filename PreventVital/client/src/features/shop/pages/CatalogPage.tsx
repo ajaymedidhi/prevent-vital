@@ -16,7 +16,8 @@ const CatalogPage = () => {
                 // Assuming API URL, might need env variable import. 
                 // Using relative path via Vite proxy if setup, or hardcoded for now.
                 // Assuming vite.config.js proxies /api to backend. if not, need full URL.
-                const res = await axios.get('http://localhost:3000/api/shop/products');
+                // Using relative path via Vite proxy
+                const res = await axios.get('/api/shop/products');
                 setProducts(res.data.data.products);
                 setUserRegion(res.data.userRegion);
             } catch (err: any) {

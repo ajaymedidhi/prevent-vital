@@ -48,7 +48,7 @@ const productSchema = new mongoose.Schema({
     }],
     supportedVitals: [{
         type: String,
-        enum: ['heart_rate', 'systolic_bp', 'diastolic_bp', 'spo2', 'ecg']
+        enum: ['heart_rate', 'systolic_bp', 'diastolic_bp', 'spo2', 'ecg', 'glucose']
     }],
     isActive: {
         type: Boolean,
