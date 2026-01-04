@@ -24,29 +24,40 @@ const Login = () => {
 
             dispatch(setCredentials({ user, token }));
 
-            // Redirect Logic
-            switch (user.role) {
-                case 'super_admin':
-                    navigate('/super-admin/dashboard');
-                    break;
-                case 'content_creator':
-                    navigate('/creator/dashboard');
-                    break;
-                case 'corporate_admin':
-                    if (user.tenantId) {
-                        navigate(`/corporate/${user.tenantId}/dashboard`);
-                    } else {
-                        console.error('Missing tenantId for corporate admin');
-                    }
-                    break;
-                case 'customer':
-                    navigate('/account');
-                    break;
-                case 'admin':
-                    navigate('/admin/dashboard');
-                    break;
-                default:
-                    navigate('/');
+            // Check for redirect param
+            const queryParams = new URLSearchParams(window.location.search);
+            const redirectUrl = queryParams.get('redirect');
+
+            if (redirectUrl) {
+                // If redirecting to checkout, ensure we go there
+                navigate(`/${redirectUrl}`);
+            } else {
+                // Default based on role
+                switch (user.role) {
+                    case 'super_admin':
+                        navigate('/super-admin/dashboard');
+                        break;
+                    case 'content_creator':
+                        navigate('/creator/dashboard');
+                        break;
+                    case 'corporate_admin':
+                        // Use corporateId as the tenantId in the URL
+                        const cId = user.corporateId || user.tenantId;
+                        if (cId) {
+                            navigate(`/corporate/${cId}/dashboard`);
+                        } else {
+                            console.error('Missing corporateId/tenantId for corporate admin');
+                        }
+                        break;
+                    case 'customer':
+                        navigate('/account');
+                        break;
+                    case 'admin':
+                        navigate('/admin/dashboard');
+                        break;
+                    default:
+                        navigate('/');
+                }
             }
         } catch (error: any) {
             console.error('Login failed:', error);

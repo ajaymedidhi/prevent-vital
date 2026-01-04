@@ -39,7 +39,22 @@ const programSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    enrolledUsers: [{
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        enrolledAt: {
+            type: Date,
+            default: Date.now
+        },
+        progress: {
+            type: Number,
+            default: 0
+        },
+        completedModules: [String]
+    }]
 });
 
 const Program = mongoose.model('Program', programSchema);

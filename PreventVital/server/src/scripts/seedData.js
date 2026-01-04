@@ -152,6 +152,69 @@ async function seedDatabase() {
             },
             status: 'active'
         });
+        // Create Corporate Admin
+        const corporateId = new mongoose.Types.ObjectId();
+        const corporateAdmin = await User.create({
+            email: 'corp.admin@techcorp.com',
+            password: 'Corp@123456',
+            role: 'corporate_admin',
+            corporateId: corporateId,
+            corporateProfile: {
+                department: 'HR',
+                employeeId: 'TC-001',
+                designation: 'HR Manager',
+                joiningDate: new Date('2023-01-15')
+            },
+            profile: {
+                firstName: 'Corporate',
+                lastName: 'Manager',
+                gender: 'female'
+            },
+            status: 'active'
+        });
+        logger.info('✓ Corporate Admin created: corp.admin@techcorp.com / Corp@123456');
+
+        // Create Corporate Employee (Customer role but with corporateId)
+        await User.create({
+            email: 'employee@techcorp.com',
+            password: 'User@123456',
+            role: 'customer',
+            corporateId: corporateId,
+            corporateProfile: {
+                department: 'Engineering',
+                employeeId: 'TC-101',
+                designation: 'Senior Dev',
+                joiningDate: new Date('2023-03-10')
+            },
+            profile: {
+                firstName: 'John',
+                lastName: 'Employee',
+                gender: 'male',
+                dateOfBirth: new Date('1990-01-01') // Vital for risk calc
+            },
+            healthProfile: {
+                smoker: false,
+                totalCholesterol: 180
+            },
+            latestVitals: { bloodPressure: { systolic: 120, diastolic: 80 } },
+            status: 'active'
+        });
+        logger.info('✓ Corporate Employee created: employee@techcorp.com / User@123456');
+
+        // Create Content Creator
+        const contentCreator = await User.create({
+            email: 'creator@gruentzig.ai',
+            password: 'Creator@123456',
+            role: 'content_creator',
+            profile: {
+                firstName: 'Content',
+                lastName: 'Creator',
+                gender: 'other'
+            },
+            status: 'active'
+        });
+        logger.info('✓ Content Creator created: creator@gruentzig.ai / Creator@123456');
+
         logger.info('✓ Sample customers created');
         // Create Sample Vitals
         const vitalsData = [
@@ -335,6 +398,9 @@ async function seedDatabase() {
         logger.info('Customer 1: ramesh.kumar@example.com / User@123456');
         logger.info('Customer 2: priya.sharma@example.com / User@123456');
         logger.info('Customer 3: anjali.reddy@example.com / User@123456');
+        logger.info('Corporate Admin: corp.admin@techcorp.com / Corp@123456');
+        logger.info('Corporate Employee: employee@techcorp.com / User@123456');
+        logger.info('Content Creator: creator@gruentzig.ai / Creator@123456');
         logger.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
         process.exit(0);
     } catch (error) {

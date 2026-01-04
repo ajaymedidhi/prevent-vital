@@ -14,5 +14,6 @@ router.use(authController.protect); // Ensure user is logged in
 
 router.post('/create-order', orderController.createRazorpayOrder);
 router.post('/verify-payment', orderController.verifyPaymentAndCreateOrder);
+router.get('/orders/my', orderController.getMyOrders);
 
 module.exports = router;

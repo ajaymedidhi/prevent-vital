@@ -1,59 +1,46 @@
-const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
-
-// Ensure invoices directory exists
-const invoiceDir = path.join(__dirname, '../public/invoices');
-if (!fs.existsSync(invoiceDir)) {
-    fs.mkdirSync(invoiceDir, { recursive: true });
-}
+const PDFDocument = require('pdfkit');
 
 exports.generateInvoice = async (order, user) => {
     return new Promise((resolve, reject) => {
         try {
-            const doc = new PDFDocument({ margin: 50 });
-            const invoiceName = `invoice-${order._id}.pdf`;
-            const invoicePath = path.join(invoiceDir, invoiceName);
+            const doc = new PDFDocument();
+            const fileName = `invoice-${order.orderId}.pdf`;
+            const filePath = path.join(__dirname, '../../public/invoices', fileName);
 
-            const writeStream = fs.createWriteStream(invoicePath);
-            doc.pipe(writeStream);
+            // Ensure directory exists
+            if (!fs.existsSync(path.join(__dirname, '../../public/invoices'))) {
+                fs.mkdirSync(path.join(__dirname, '../../public/invoices'), { recursive: true });
+            }
 
-            // Header
-            doc.fontSize(20).text('PreventVital Invoice', { align: 'center' });
-            doc.moveDown();
+            const stream = fs.createWriteStream(filePath);
+            doc.pipe(stream);
 
-            // Details
-            doc.fontSize(12).text(`Invoice Number: ${order._id}`);
-            doc.text(`Date: ${new Date().toLocaleDateString()}`);
-            doc.text(`Customer: ${user.name}`);
-            doc.text(`Email: ${user.email}`);
-            doc.moveDown();
+            // Add content
+            doc.fontSize(25).text('PreventVital Invoice', 100, 50);
+            doc.fontSize(12).text(`Order ID: ${order.orderId}`, 100, 100);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 100, 120);
+            doc.text(`Customer: ${user.profile?.firstName} ${user.profile?.lastName}`, 100, 140);
+            doc.text(`Total: ₹${order.pricing?.total || 0}`, 100, 160);
 
-            // Items
-            doc.text('Items:', { underline: true });
-            order.items.forEach(item => {
-                doc.text(`${item.name} x ${item.quantity} - ₹${item.price}`);
-            });
-            doc.moveDown();
-
-            // Total
-            doc.fontSize(14).text(`Total Amount: ₹${order.totalAmount}`, { bold: true });
+            doc.text('Items:', 100, 200);
+            let y = 220;
+            if (order.items) {
+                order.items.forEach(item => {
+                    doc.text(`${item.productName} x ${item.quantity} - ₹${item.price}`, 100, y);
+                    y += 20;
+                });
+            }
 
             doc.end();
 
-            writeStream.on('finish', () => {
-                // In a real app, upload to S3 and return the S3 URL.
-                // Here we return a local URL relative to the public folder.
-                // Assuming express serves static files from public/invoices or similar.
-                // Since this is an API, we probably need a route to serve it or just return the static path.
-                // User requirement: "upload to AWS S3, save the URL"
-                // I will simulate an S3 URL or return a local served URL.
-                const fileUrl = `/invoices/${invoiceName}`;
-                resolve(fileUrl);
+            stream.on('finish', () => {
+                // Return relative URL
+                resolve(`/invoices/${fileName}`);
             });
 
-            writeStream.on('error', (err) => {
+            stream.on('error', (err) => {
                 reject(err);
             });
 

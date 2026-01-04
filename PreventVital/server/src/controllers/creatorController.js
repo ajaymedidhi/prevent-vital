@@ -30,13 +30,41 @@ exports.getMyPrograms = async (req, res) => {
 
 exports.getEarnings = async (req, res) => {
     try {
-        // Mocking logic or aggregation if Order had 'program' items specifically linked to creators
-        // For now, let's just return a placeholder or sum if we had the relationship
+        // Aggregate Orders where items.creatorId matches req.user._id
+        const stats = await Order.aggregate([
+            { $unwind: '$items' },
+            { $match: { 'items.creatorId': req.user._id, 'payment.status': 'completed' } },
+            {
+                $group: {
+                    _id: null,
+                    totalEarnings: { $sum: { $multiply: ['$items.price', '$items.quantity'] } },
+                    totalSales: { $sum: '$items.quantity' }
+                }
+            }
+        ]);
+
+        // Get monthly earnings (simplified for brevity, can duplicate group with date match)
+        const currentMonth = new Date();
+        currentMonth.setDate(1); // First day
+
+        const monthlyStats = await Order.aggregate([
+            { $match: { createdAt: { $gte: currentMonth }, 'payment.status': 'completed' } },
+            { $unwind: '$items' },
+            { $match: { 'items.creatorId': req.user._id } },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: { $multiply: ['$items.price', '$items.quantity'] } }
+                }
+            }
+        ]);
+
         const earnings = {
-            total: 15400,
-            thisMonth: 3200,
-            pendingPayout: 1200
+            total: stats[0]?.totalEarnings || 0,
+            thisMonth: monthlyStats[0]?.total || 0,
+            pendingPayout: 0 // Logic for payouts would be separate
         };
+
         res.status(200).json({ status: 'success', data: { earnings } });
     } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });

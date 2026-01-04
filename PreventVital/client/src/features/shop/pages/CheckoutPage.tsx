@@ -39,8 +39,10 @@ const CheckoutPage = () => {
         setLoading(true);
         try {
             // 1. Create Order
-            const { data: orderData } = await axios.post('http://localhost:3000/api/shop/create-order', {
+            const { data: orderData } = await axios.post('/api/shop/create-order', {
                 amount: total * 100 // Convert to paise
+            }, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
 
             const options = {
@@ -53,7 +55,7 @@ const CheckoutPage = () => {
                 handler: async function (response: any) {
                     try {
                         // 2. Verify Payment
-                        const verifyRes = await axios.post('http://localhost:3000/api/shop/verify-payment', {
+                        const verifyRes = await axios.post('/api/shop/verify-payment', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
@@ -65,6 +67,8 @@ const CheckoutPage = () => {
                             })),
                             totalAmount: total,
                             shippingAddress
+                        }, {
+                            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                         });
 
                         if (verifyRes.data.status === 'success') {

@@ -2,16 +2,36 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 
-const signToken = id => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const { createSession } = require('../middleware/sessionMiddleware');
+
+const signToken = (user, sessionId) => {
+    const payload = {
+        id: user._id,
+        role: user.role,
+        sessionId: sessionId // IMPORTANT: Bind token to a specific session
+    };
+
+    if (user.corporateId) {
+        payload.corporateId = user.corporateId;
+    }
+
+    return jwt.sign(payload, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
 };
 
 const { ROLE_PERMISSIONS } = require('../config/rbacConfig');
 
-const createSendToken = (user, statusCode, res) => {
-    const token = signToken(user._id);
+const createSendToken = async (user, statusCode, res, req) => {
+    // 1. Create a session in DB
+    const sessionId = await createSession(user, req);
+
+    // Attach user to req for Audit Middleware (hooks on finish)
+    req.user = user;
+
+    // 2. Sign token with sessionId
+    const token = signToken(user, sessionId);
+
     const cookieOptions = {
         expires: new Date(
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
@@ -27,9 +47,6 @@ const createSendToken = (user, statusCode, res) => {
     // Attach Permissions based on Role
     const permissions = ROLE_PERMISSIONS[user.role] || [];
 
-    // We converting user mongoose doc to object to append permissions if needed, 
-    // or just sending it as a separate field in `data`.
-    // Let's send it in the `user` object for frontend convenience.
     const userObj = user.toObject ? user.toObject() : user;
     userObj.permissions = permissions;
 
@@ -52,7 +69,7 @@ exports.signup = async (req, res, next) => {
             tenantId: req.body.tenantId
         });
 
-        createSendToken(newUser, 201, res);
+        await createSendToken(newUser, 201, res, req);
     } catch (err) {
         res.status(400).json({
             status: 'fail',
@@ -76,10 +93,13 @@ exports.login = async (req, res, next) => {
         }
 
         if (user.status === 'suspended') {
+            console.log(`Login blocked: User ${user.email} is suspended.`);
             return res.status(403).json({ message: 'Your account has been suspended.' });
         }
 
-        createSendToken(user, 200, res);
+        console.log(`Login proceeding for ${user.email}. Status: ${user.status}`);
+
+        await createSendToken(user, 200, res, req);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -107,6 +127,7 @@ exports.protect = async (req, res, next) => {
             return res.status(401).json({ message: 'The user belonging to this token no longer does exist.' });
         }
         req.user = currentUser;
+        req.user.sessionId = decoded.sessionId; // Attach sessionId from token to user object for verifySession
         next();
     } catch (err) {
         return res.status(401).json({ message: 'Invalid token' });

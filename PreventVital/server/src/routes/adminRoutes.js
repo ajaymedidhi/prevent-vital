@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Protect all routes after this middleware
 router.use(authController.protect);
-router.use(authController.restrictTo('super_admin'));
+router.use(authController.restrictTo('super_admin', 'admin'));
 
 router.get('/users', adminController.getAllUsers);
 router.patch('/users/:id/suspend', adminController.updateUserStatus);
@@ -18,5 +18,8 @@ router.get('/stats', adminController.getDashboardStats);
 router.get('/realtime', adminController.getRealtimeMetrics);
 router.get('/alerts', adminController.getCriticalAlerts);
 router.get('/predictions', adminController.getAIPredictions);
+
+// Risk Calculator
+router.post('/calculate-risk', adminController.calculateRisk);
 
 module.exports = router;

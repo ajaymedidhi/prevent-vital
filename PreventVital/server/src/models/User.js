@@ -19,6 +19,38 @@ const userSchema = new mongoose.Schema({
         enum: ['super_admin', 'admin', 'corporate_admin', 'content_creator', 'customer'],
         default: 'customer'
     },
+    // New: Differentiate between individual and corporate customers
+    customerType: {
+        type: String,
+        enum: ['individual', 'corporate'],
+        default: 'individual',
+        required: function () { return this.role === 'customer'; }
+    },
+    // Privacy & Data Control
+    privacySettings: {
+        dataSharing: { type: Boolean, default: false }, // Aggregated data sharing
+        marketingEmails: { type: Boolean, default: true },
+        twoFactorEnabled: { type: Boolean, default: false }
+    },
+    loginHistory: [{
+        timestamp: Date,
+        ip: String,
+        device: String,
+        location: String
+    }],
+    // Corporate Metadata
+    corporateId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Corporate', // We assume a Corporate model will exist or just store ID for now
+        index: true
+    },
+    corporateProfile: {
+        department: String,
+        employeeId: String,
+        designation: String,
+        joiningDate: Date,
+        corporateEnrolledAt: { type: Date, default: Date.now }
+    },
     profile: {
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },

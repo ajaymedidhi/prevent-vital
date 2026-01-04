@@ -13,6 +13,14 @@ const orderSchema = new mongoose.Schema({
     },
     items: [{
         productName: String,
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        },
+        creatorId: { // Denormalized for earnings calculation
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
         productImage: String,
         quantity: Number,
         price: Number
@@ -36,7 +44,10 @@ const orderSchema = new mongoose.Schema({
             default: 'pending'
         },
         method: String,
-        paidAt: Date
+        paidAt: Date,
+        razorpay_order_id: String,
+        razorpay_payment_id: String,
+        razorpay_signature: String
     }
 }, {
     timestamps: true

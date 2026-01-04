@@ -9,7 +9,10 @@ const adminRoutes = require('./routes/adminRoutes');
 const shopRoutes = require('./routes/shopRoutes');
 const creatorRoutes = require('./routes/creatorRoutes');
 const corporateRoutes = require('./routes/corporateRoutes');
+const contentRoutes = require('./routes/contentRoutes');
+
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const vitalRoutes = require('./routes/vitalRoutes');
 
 dotenv.config();
 
@@ -27,10 +30,13 @@ app.use(cookieParser());
 app.use(express.static('public')); // Serve static files like invoices
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', require('./routes/userRoutes')); // New User Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/creator', creatorRoutes);
 app.use('/api/corporate', corporateRoutes);
+app.use('/api/content', contentRoutes);
+app.use('/api/vitals', vitalRoutes);
 
 // Database Connection
 
