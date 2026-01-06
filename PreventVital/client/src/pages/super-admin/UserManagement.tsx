@@ -16,7 +16,7 @@ const UserManagement = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await axios.get('http://localhost:3000/api/admin/users', {
+            const res = await axios.get('/api/admin/users', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(res.data.data.users);
@@ -32,7 +32,7 @@ const UserManagement = () => {
         if (!window.confirm(`Are you sure you want to change status to ${newStatus}?`)) return;
 
         try {
-            await axios.patch(`http://localhost:3000/api/admin/users/${id}/suspend`, { status: newStatus }, {
+            await axios.patch(`/api/admin/users/${id}/suspend`, { status: newStatus }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchUsers();

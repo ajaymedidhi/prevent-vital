@@ -13,6 +13,28 @@ exports.createRazorpayOrder = async (req, res) => {
     try {
         const { amount } = req.body; // Amount in smallest currency unit (paise)
 
+        // MOCK/DEV MODE: If keys are missing/placeholder, return mock order
+        if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === 'rzp_test_placeholder') {
+            console.log("Dev Mode: Returning Mock Razorpay Order");
+            const mockOrder = {
+                id: `order_mock_${Date.now()}`,
+                entity: "order",
+                amount: amount,
+                amount_paid: 0,
+                amount_due: amount,
+                currency: "INR",
+                receipt: `order_rcptid_${Date.now()}`,
+                status: "created",
+                attempts: 0,
+                created_at: Math.floor(Date.now() / 1000),
+            };
+
+            return res.status(200).json({
+                status: 'success',
+                order: mockOrder // RETURN AT ROOT to match frontend expectation
+            });
+        }
+
         const options = {
             amount: amount,
             currency: 'INR',
@@ -26,6 +48,7 @@ exports.createRazorpayOrder = async (req, res) => {
             order
         });
     } catch (err) {
+        console.error("Razorpay Order Create Failed:", err);
         res.status(500).json({
             status: 'error',
             message: err.message
@@ -35,14 +58,19 @@ exports.createRazorpayOrder = async (req, res) => {
 
 exports.verifyPaymentAndCreateOrder = async (req, res) => {
     try {
+        console.log("Verify Payment Body:", JSON.stringify(req.body, null, 2)); // Debug Log
+
         const {
             razorpay_order_id,
+            // ... (rest is same)
             razorpay_payment_id,
             razorpay_signature,
             items,
             totalAmount,
             shippingAddress
         } = req.body;
+
+        // ... (signature check logic)
 
         const body = razorpay_order_id + '|' + razorpay_payment_id;
 
@@ -56,10 +84,9 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         const isValid = expectedSignature === razorpay_signature || (isDev && razorpay_signature === 'bypass');
 
         if (isValid) {
+            // ... (stock logic) 
             // Atomically decrement stock
             for (const item of items) {
-                // Determine item ID (handle both product and program IDs if unified, for now assume product)
-                // If ID is found in Product model, decrement.
                 const product = await Product.findById(item.product);
                 if (product) {
                     await Product.findByIdAndUpdate(item.product, {
@@ -74,10 +101,10 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
                 items: items.map(i => ({
                     productName: i.name,
                     productId: i.product,
-                    // creatorId: i.creatorId, // Pass this from frontend if available
+                    // creatorId: i.creatorId, 
                     quantity: i.quantity,
-                    price: i.price,
-                    productImage: i.image
+                    price: i.price
+                    // productImage: i.image // Removed to prevent undefined error/validation
                 })),
                 pricing: {
                     subtotal: totalAmount,
@@ -111,6 +138,8 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
             // newOrder.invoiceUrl = invoiceUrl;
             await newOrder.save();
 
+            const invoiceUrl = null; // Fix ReferenceError: invoiceUrl is not defined
+
             res.status(201).json({
                 status: 'success',
                 message: 'Order placed successfully',
@@ -126,10 +155,11 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
         }
 
     } catch (err) {
-        console.error(err);
+        console.error("Order Verify Error:", err); // Added logs
         res.status(500).json({
             status: 'error',
-            message: err.message
+            message: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
         });
     }
 };

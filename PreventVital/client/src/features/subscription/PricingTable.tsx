@@ -7,11 +7,14 @@ import Icon from '@/components/ui/AppIcon';
 import axios from 'axios';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../store';
 
 const PricingTable = () => {
     const [isAnnual, setIsAnnual] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleSubscribe = async (plan: any) => {
         try {
@@ -28,7 +31,8 @@ const PricingTable = () => {
                 return;
             }
 
-            const res = await axios.post('http://localhost:3000/api/subscriptions/create', {
+            console.log("Subscribing with Token:", token); // DEBUG
+            const res = await axios.post('/api/subscriptions/create', {
                 planId: plan.id,
                 interval: isAnnual ? 'annual' : 'monthly'
             }, {
@@ -36,14 +40,33 @@ const PricingTable = () => {
             });
 
             // Initialize Razorpay
+            const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+
+            // BYPASS FOR DEV/DEMO: If key is placeholder, simulate success immediately
+            if (keyId === 'rzp_test_placeholder' || keyId === '') {
+                console.log("Dev Mode: Bypassing Razorpay Payment...");
+                await axios.post('/api/subscriptions/verify', {
+                    razorpay_payment_id: `pay_${Date.now()}_mock`,
+                    razorpay_subscription_id: res.data.subscription.id,
+                    razorpay_signature: 'mock_signature', // backend allows bypass if sub_id has _mock
+                    planId: plan.id
+                }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                toast({ title: "Subscription Active (Dev Mode)", description: `You are now on the ${plan.name} plan!` });
+                navigate('/account');
+                return;
+            }
+
             const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
+                key: keyId,
                 subscription_id: res.data.subscription.id,
                 name: "PreventVital",
                 description: `${plan.name} Subscription`,
                 handler: async function (response: any) {
                     try {
-                        await axios.post('http://localhost:3000/api/subscriptions/verify', {
+                        await axios.post('/api/subscriptions/verify', {
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_subscription_id: response.razorpay_subscription_id,
                             razorpay_signature: response.razorpay_signature,
@@ -66,6 +89,14 @@ const PricingTable = () => {
 
         } catch (err: any) {
             console.error(err);
+            if (err.response && err.response.status === 401) {
+                // Auto-logout on 401
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                toast({ title: "Session Expired", description: "Please login again to continue.", variant: "destructive" });
+                navigate('/login');
+                return;
+            }
             toast({ title: "Error", description: err.message || "Failed to initiate subscription.", variant: "destructive" });
         }
     };
@@ -102,7 +133,7 @@ const PricingTable = () => {
                             <ul className="space-y-3">
                                 {plan.features.map((feature, idx) => (
                                     <li key={idx} className="flex items-center gap-2 text-sm">
-                                        <Icon name="CheckCircleIcon" className="text-green-500 w-4 h-4" />
+                                        <Icon name="CheckCircle" className="text-green-500 w-4 h-4" />
                                         {feature}
                                     </li>
                                 ))}

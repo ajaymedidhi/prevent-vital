@@ -10,7 +10,7 @@ const ProductList = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        axios.get('http://localhost:3000/api/shop/products')
+        axios.get('/api/shop/products')
             .then(res => {
                 console.log("Products Fetched:", res.data);
                 setProducts(res.data.data.products);

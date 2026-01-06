@@ -96,15 +96,15 @@ exports.getDashboardStats = async (req, res) => {
             }
         ]);
 
-        const totalRevenue = revenueAgg[0]?.totalRevenue || 0;
-        const todayRevenue = revenueAgg[0]?.todayRevenue || 0;
+        const totalRevenue = (revenueAgg[0]?.totalRevenue || 0); // Ensure number
+        const todayRevenue = (revenueAgg[0]?.todayRevenue || 0);
 
         const revenue = {
             today: todayRevenue,
-            month: totalRevenue, // simplified for demo
-            year: totalRevenue, // simplified for demo
-            growth: 12.5, // Mocked growth
-            arr: totalRevenue * 12
+            month: totalRevenue,
+            year: totalRevenue,
+            growth: 12.5,
+            arr: totalRevenue * 12 || 0 // Ensure no NaN
         };
 
         const subscriptions = {
@@ -113,6 +113,15 @@ exports.getDashboardStats = async (req, res) => {
             gold: await User.countDocuments({ 'subscription.plan': 'gold' }),
             platinum: await User.countDocuments({ 'subscription.plan': 'platinum' }),
             churnRate: 2.3
+        };
+
+        // Role Breakdown
+        const roles = {
+            super_admin: await User.countDocuments({ role: 'super_admin' }),
+            admin: await User.countDocuments({ role: 'admin' }),
+            corporate_admin: await User.countDocuments({ role: 'corporate_admin' }),
+            content_creator: await User.countDocuments({ role: 'content_creator' }),
+            customer: await User.countDocuments({ role: 'customer' })
         };
 
         const criticalAlertsCount = await Vital.countDocuments({ status: 'critical' });
@@ -155,6 +164,7 @@ exports.getDashboardStats = async (req, res) => {
                 },
                 revenue,
                 subscriptions,
+                roles, // New field
                 orders,
                 health: healthStats,
                 aiMetrics

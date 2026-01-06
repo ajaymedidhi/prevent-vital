@@ -58,6 +58,21 @@ const SubscriptionCard = ({ plan, count, color, percentage }: any) => (
     </div>
 );
 
+const RoleCard = ({ role, count, icon: Icon, color }: any) => (
+    <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+            <div className={`p-2 rounded-full bg-${color}-100 text-${color}-600`}>
+                <Icon className="w-5 h-5" />
+            </div>
+            <div>
+                <div className="font-medium text-gray-900 capitalize">{role.replace('_', ' ')}</div>
+                <div className="text-xs text-gray-500">Access Level</div>
+            </div>
+        </div>
+        <div className="text-2xl font-bold text-gray-900">{count}</div>
+    </div>
+);
+
 const SuperAdminDashboard = () => {
     const [stats, setStats] = useState<any>(null);
     const [alerts, setAlerts] = useState<any[]>([]);
@@ -71,6 +86,7 @@ const SuperAdminDashboard = () => {
     // Initial data load
     useEffect(() => {
         loadInitialData();
+        loadRealtimeData(); // Load immediately
     }, []);
 
     // Real-time updates every 5 seconds
@@ -97,10 +113,18 @@ const SuperAdminDashboard = () => {
                 axios.get('/api/admin/predictions', config)
             ]);
 
-            setStats(dashStats.data.data);
-            setAlerts(alertsData.data.data);
-            setUsers(usersData.data.data.users);
-            setAiPredictions(predictions.data.data);
+            console.log('API RESPONSE [STATS]:', dashStats.data);
+
+            // Robust data extraction handling potential structure variations
+            const sData = dashStats.data?.data || dashStats.data || {};
+            const aData = alertsData.data?.data || alertsData.data || [];
+            const uData = usersData.data?.data?.users || usersData.data?.users || [];
+            const pData = predictions.data?.data || predictions.data || [];
+
+            setStats(sData);
+            setAlerts(aData);
+            setUsers(uData);
+            setAiPredictions(pData);
         } catch (error) {
             console.error('Error loading data:', error);
         } finally {
@@ -113,15 +137,19 @@ const SuperAdminDashboard = () => {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const [metrics, latestAlerts] = await Promise.all([
-                axios.get('/api/admin/realtime', config),
-                axios.get('/api/admin/alerts', config)
-            ]);
+            // Separate try-catch to allow partial failure
+            try {
+                const metrics = await axios.get('/api/admin/realtime', config);
+                setRealtimeMetrics(metrics.data?.data || metrics.data || null);
+            } catch (e) { console.warn("Realtime fetch failed", e); }
 
-            setRealtimeMetrics(metrics.data.data);
-            setAlerts(latestAlerts.data.data);
+            try {
+                const latestAlerts = await axios.get('/api/admin/alerts', config);
+                setAlerts(latestAlerts.data?.data || latestAlerts.data || []);
+            } catch (e) { console.warn("Alerts fetch failed", e); }
+
         } catch (error) {
-            console.error('Error loading realtime data:', error);
+            console.error('Error loading realtime data wrapper:', error);
         }
     };
 
@@ -164,27 +192,27 @@ const SuperAdminDashboard = () => {
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                         <div className="bg-white/10 rounded-lg p-3">
                             <div className="text-sm opacity-90">Active Users</div>
-                            <div className="text-2xl font-bold">{realtimeMetrics.activeUsers}</div>
+                            <div className="text-2xl font-bold">{realtimeMetrics.activeUsers ?? '-'}</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-3">
                             <div className="text-sm opacity-90">Active Sessions</div>
-                            <div className="text-2xl font-bold">{realtimeMetrics.activeSessions}</div>
+                            <div className="text-2xl font-bold">{realtimeMetrics.activeSessions ?? '-'}</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-3">
                             <div className="text-sm opacity-90">Vitals/Min</div>
-                            <div className="text-2xl font-bold">{realtimeMetrics.vitalsPerMinute}</div>
+                            <div className="text-2xl font-bold">{realtimeMetrics.vitalsPerMinute ?? '-'}</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-3">
                             <div className="text-sm opacity-90">API Latency</div>
-                            <div className="text-2xl font-bold">{realtimeMetrics.apiResponseTime}ms</div>
+                            <div className="text-2xl font-bold">{realtimeMetrics.apiResponseTime ?? '-'}ms</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-3">
                             <div className="text-sm opacity-90">System Health</div>
-                            <div className="text-2xl font-bold">{realtimeMetrics.systemHealth}%</div>
+                            <div className="text-2xl font-bold">{realtimeMetrics.systemHealth ?? '-'}%</div>
                         </div>
                         <div className="bg-white/10 rounded-lg p-3">
                             <div className="text-sm opacity-90">DB Connections</div>
-                            <div className="text-2xl font-bold">{realtimeMetrics.databaseConnections}</div>
+                            <div className="text-2xl font-bold">{realtimeMetrics.databaseConnections ?? '-'}</div>
                         </div>
                     </div>
                 )}
@@ -194,31 +222,31 @@ const SuperAdminDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <MetricCard
                     title="Total Users"
-                    value={stats?.users.total.toLocaleString()}
-                    change={`+${stats?.users.growth}%`}
+                    value={(stats?.users?.total ?? 0).toLocaleString()}
+                    change={`+${stats?.users?.growth ?? 0}%`}
                     icon={Users}
                     color="blue"
-                    subtitle={`${stats?.users.active.toLocaleString()} active`}
+                    subtitle={`${(stats?.users?.active ?? 0).toLocaleString()} active`}
                 />
                 <MetricCard
                     title="Monthly Revenue"
-                    value={`₹${(stats?.revenue.month / 100000).toFixed(1)}L`}
-                    change={`+${stats?.revenue.growth}%`}
+                    value={`₹${((stats?.revenue?.month ?? 0) / 100000).toFixed(1)}L`}
+                    change={`+${stats?.revenue?.growth ?? 0}%`}
                     icon={DollarSign}
                     color="green"
-                    subtitle={`ARR: ₹${(stats?.revenue.arr / 10000000).toFixed(1)}Cr`}
+                    subtitle={`ARR: ₹${((stats?.revenue?.arr ?? 0) / 10000000).toFixed(1)}Cr`}
                 />
                 <MetricCard
                     title="Active Programs"
-                    value={stats?.health.programsActive}
+                    value={stats?.health?.programsActive ?? 0}
                     change="+8.2%"
                     icon={Activity}
                     color="purple"
-                    subtitle={`${stats?.health.consultations} consultations`}
+                    subtitle={`${stats?.health?.consultations ?? 0} consultations`}
                 />
                 <MetricCard
                     title="Critical Alerts"
-                    value={stats?.health.criticalAlerts}
+                    value={stats?.health?.criticalAlerts ?? 0}
                     change="↓ 2 from yesterday"
                     icon={AlertCircle}
                     color="red"
@@ -245,8 +273,8 @@ const SuperAdminDashboard = () => {
                     <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
                         {alerts.map((alert: any) => (
                             <div key={alert.id} className={`p-4 rounded-lg border-l-4 ${alert.severity === 'critical'
-                                    ? 'bg-red-50 border-red-500'
-                                    : 'bg-yellow-50 border-yellow-500'
+                                ? 'bg-red-50 border-red-500'
+                                : 'bg-yellow-50 border-yellow-500'
                                 }`}>
                                 <div className="flex items-start justify-between mb-2">
                                     <div>
@@ -254,8 +282,8 @@ const SuperAdminDashboard = () => {
                                         <p className="text-sm text-gray-600">{alert.message}</p>
                                     </div>
                                     <span className={`text-xs font-medium px-2 py-1 rounded ${alert.severity === 'critical'
-                                            ? 'bg-red-200 text-red-800'
-                                            : 'bg-yellow-200 text-yellow-800'
+                                        ? 'bg-red-200 text-red-800'
+                                        : 'bg-yellow-200 text-yellow-800'
                                         }`}>
                                         {alert.severity.toUpperCase()}
                                     </span>
@@ -339,27 +367,27 @@ const SuperAdminDashboard = () => {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <SubscriptionCard
                         plan="Free"
-                        count={stats?.subscriptions.free}
+                        count={stats?.subscriptions?.free ?? 0}
                         color="gray"
-                        percentage={stats?.users.total ? (stats.subscriptions.free / stats.users.total * 100).toFixed(1) : 0}
+                        percentage={stats?.users?.total ? ((stats?.subscriptions?.free ?? 0) / stats.users.total * 100).toFixed(1) : 0}
                     />
                     <SubscriptionCard
                         plan="Silver"
-                        count={stats?.subscriptions.silver}
+                        count={stats?.subscriptions?.silver ?? 0}
                         color="blue"
-                        percentage={stats?.users.total ? (stats.subscriptions.silver / stats.users.total * 100).toFixed(1) : 0}
+                        percentage={stats?.users?.total ? ((stats?.subscriptions?.silver ?? 0) / stats.users.total * 100).toFixed(1) : 0}
                     />
                     <SubscriptionCard
                         plan="Gold"
-                        count={stats?.subscriptions.gold}
+                        count={stats?.subscriptions?.gold ?? 0}
                         color="yellow"
-                        percentage={stats?.users.total ? (stats.subscriptions.gold / stats.users.total * 100).toFixed(1) : 0}
+                        percentage={stats?.users?.total ? ((stats?.subscriptions?.gold ?? 0) / stats.users.total * 100).toFixed(1) : 0}
                     />
                     <SubscriptionCard
                         plan="Platinum"
-                        count={stats?.subscriptions.platinum}
+                        count={stats?.subscriptions?.platinum ?? 0}
                         color="purple"
-                        percentage={stats?.users.total ? (stats.subscriptions.platinum / stats.users.total * 100).toFixed(1) : 0}
+                        percentage={stats?.users?.total ? ((stats?.subscriptions?.platinum ?? 0) / stats.users.total * 100).toFixed(1) : 0}
                     />
                 </div>
                 <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -369,6 +397,18 @@ const SuperAdminDashboard = () => {
                             Churn Rate: {stats?.subscriptions.churnRate}% (Target: &lt;2%)
                         </span>
                     </div>
+                </div>
+            </div>
+
+            {/* Role Distribution */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">User Roles Overview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <RoleCard role="Super Admin" count={stats?.roles?.super_admin ?? 0} icon={Users} color="purple" />
+                    <RoleCard role="Admin" count={stats?.roles?.admin ?? 0} icon={Users} color="blue" />
+                    <RoleCard role="Corporate" count={stats?.roles?.corporate_admin ?? 0} icon={Users} color="indigo" />
+                    <RoleCard role="Creator" count={stats?.roles?.content_creator ?? 0} icon={Users} color="pink" />
+                    <RoleCard role="Customer" count={stats?.roles?.customer ?? 0} icon={Users} color="green" />
                 </div>
             </div>
 

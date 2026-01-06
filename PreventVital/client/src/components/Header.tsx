@@ -38,8 +38,7 @@ const Header = ({ className = '' }: HeaderProps) => {
   const secondaryNavItems = [
     { label: 'Partnership Portal', href: '/partnership-portal' },
     { label: 'Therapeutic Programs', href: '/therapeutic-programs-center' },
-    { label: 'Creator Portal', href: '/creator' },
-    { label: 'Corporate Portal', href: '/corporate/demo-tenant' },
+    // Removed specific role dashboards from public nav to avoid confusion
     { label: 'Our Team', href: '/team' },
   ];
 
@@ -127,12 +126,20 @@ const Header = ({ className = '' }: HeaderProps) => {
             </Link>
 
             {isAuthenticated ? (
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors"
-              >
-                Logout
-              </button>
+              <>
+                <Link
+                  to="/account"
+                  className="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors border border-indigo-200"
+                >
+                  My Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link

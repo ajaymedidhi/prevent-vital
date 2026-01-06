@@ -20,7 +20,7 @@ import ProductDetailPage from "./features/shop/pages/ProductDetailPage";
 import CartPage from "./features/shop/pages/CartPage";
 import CheckoutPage from "./features/shop/pages/CheckoutPage";
 import OrderSuccessPage from "./features/shop/pages/OrderSuccessPage";
-import RegionBanner from './components/RegionBanner';
+
 import CreatorLayout from './layouts/CreatorLayout';
 import CreatorDashboard from './pages/creator/Dashboard';
 import ProgramBuilder from './pages/creator/ProgramBuilder';
@@ -66,7 +66,7 @@ const App = () => (
             <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                <RegionBanner />
+
                 <BrowserRouter>
                     <ScrollToTop />
                     <Routes>

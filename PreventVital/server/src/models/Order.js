@@ -48,6 +48,15 @@ const orderSchema = new mongoose.Schema({
         razorpay_order_id: String,
         razorpay_payment_id: String,
         razorpay_signature: String
+    },
+    shippingAddress: {
+        street: String,
+        city: String,
+        state: String,
+        postalCode: String,
+        country: String,
+        fullName: String, // Added per user request
+        phone: String     // Added per user request
     }
 }, {
     timestamps: true

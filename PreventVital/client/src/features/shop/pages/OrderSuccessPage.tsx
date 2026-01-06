@@ -37,7 +37,7 @@ const OrderSuccessPage = () => {
             {invoiceUrl && (
                 <div className="mt-8">
                     <Button asChild variant="link" className="text-primary text-white">
-                        <a href={`http://localhost:3000${invoiceUrl}`} target="_blank" rel="noopener noreferrer" className="gap-2 flex items-center justify-center">
+                        <a href={`${invoiceUrl}`} target="_blank" rel="noopener noreferrer" className="gap-2 flex items-center justify-center">
                             <Download size={16} />
                             Download Tax Invoice
                         </a>

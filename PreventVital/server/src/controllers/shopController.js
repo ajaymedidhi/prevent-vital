@@ -45,7 +45,15 @@ exports.getProducts = async (req, res) => {
 
 exports.getProductBySlug = async (req, res) => {
     try {
-        const product = await Product.findOne({ slug: req.params.slug, isActive: true });
+        const identifier = req.params.slug;
+        let query = { slug: identifier, isActive: true };
+
+        // If identifier looks like a MongoID, search by ID as fallback
+        if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+            query = { $or: [{ slug: identifier }, { _id: identifier }], isActive: true };
+        }
+
+        const product = await Product.findOne(query);
 
         if (!product) {
             return res.status(404).json({

@@ -276,35 +276,47 @@ async function seedDatabase() {
                 price: 2499,
                 category: 'bp_monitor',
                 stock: 50,
-                images: ['https://placehold.co/600x400?text=BP+Monitor'],
+                images: [
+                    '/products/bp_monitor.png',
+                    'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80'
+                ],
                 supportedVitals: ['systolic_bp', 'diastolic_bp', 'heart_rate'],
                 specs: [{ label: 'Connectivity', value: 'Bluetooth 5.0' }, { label: 'Memory', value: '100 readings' }]
             },
             {
                 name: 'Gruentzig ECG Patch',
-                description: '24/7 continuous heart rate and ECG monitoring patch. water resistant and comfortable.',
+                description: '24/7 continuous heart rate and ECG monitoring patch. Water resistant and comfortable.',
                 price: 4999,
                 category: 'ecg_patch',
                 stock: 100,
-                images: ['https://placehold.co/600x400?text=ECG+Patch'],
+                images: [
+                    '/products/ecg_patch.png',
+                    'https://images.unsplash.com/photo-1551816230-ef5deaed4a26?w=800&auto=format&fit=crop&q=80'
+                ],
                 supportedVitals: ['ecg', 'heart_rate']
             },
             {
                 name: 'GlucoSmart Connect',
-                description: 'Smart blood glucose meter that syncs directly with the PreventVital app.',
+                description: 'Smart blood glucose meter that syncs directly with the PreventVital app to track your levels.',
                 price: 1999,
                 category: 'device',
                 stock: 75,
-                images: ['https://placehold.co/600x400?text=GlucoSmart'],
+                images: [
+                    '/products/gluco_smart.png',
+                    'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&auto=format&fit=crop&q=80'
+                ],
                 supportedVitals: ['glucose']
             },
             {
                 name: 'VitalWatch Series 5',
-                description: 'Advanced smartwatch for monitoring SpO2, Heart Rate, and Sleep quality.',
+                description: 'Advanced smartwatch for monitoring SpO2, Heart Rate, and Sleep quality with 7-day battery life.',
                 price: 8999,
                 category: 'smart_watch',
                 stock: 30,
-                images: ['https://placehold.co/600x400?text=VitalWatch'],
+                images: [
+                    '/products/vital_watch.png',
+                    'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&auto=format&fit=crop&q=80'
+                ],
                 supportedVitals: ['heart_rate', 'spo2']
             }
         ];

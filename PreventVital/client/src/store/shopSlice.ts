@@ -8,6 +8,7 @@ export interface Product {
     mrp?: number;
     images: string[];
     image?: string;
+    description?: string;
     category: string;
     stock: number;
     allowedRegions: string[];
@@ -58,14 +59,32 @@ const shopSlice = createSlice({
             } else {
                 state.cart.push({ ...action.payload, quantity: 1 });
             }
-            state.total += action.payload.price;
+            // Recalculate total
+            state.total = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
             saveCartToStorage(state);
+        },
+        updateQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
+            const { id, quantity } = action.payload;
+            const itemIndex = state.cart.findIndex(item => item._id === id);
+
+            if (itemIndex >= 0) {
+                if (quantity <= 0) {
+                    // Remove item if quantity is 0 or less
+                    state.cart.splice(itemIndex, 1);
+                } else {
+                    state.cart[itemIndex].quantity = quantity;
+                }
+                // Recalculate total
+                state.total = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+                saveCartToStorage(state);
+            }
         },
         removeFromCart: (state, action: PayloadAction<string>) => {
             const itemIndex = state.cart.findIndex(item => item._id === action.payload);
             if (itemIndex >= 0) {
-                state.total -= state.cart[itemIndex].price * state.cart[itemIndex].quantity;
                 state.cart.splice(itemIndex, 1);
+                // Recalculate total
+                state.total = state.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
                 saveCartToStorage(state);
             }
         },
@@ -77,5 +96,5 @@ const shopSlice = createSlice({
     }
 });
 
-export const { addToCart, removeFromCart, clearCart } = shopSlice.actions;
+export const { addToCart, updateQuantity, removeFromCart, clearCart } = shopSlice.actions;
 export default shopSlice.reducer;

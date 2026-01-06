@@ -37,6 +37,7 @@ app.use('/api/creator', creatorRoutes);
 app.use('/api/corporate', corporateRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/vitals', vitalRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // Database Connection
 

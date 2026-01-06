@@ -6,5 +6,6 @@ const { auditAction } = require('../middleware/auditMiddleware');
 
 router.post('/signup', authController.signup);
 router.post('/login', auditAction('LOGIN', 'User'), authController.login);
+router.get('/me', authController.protect, authController.getMe);
 
 module.exports = router;

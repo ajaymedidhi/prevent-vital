@@ -61,12 +61,20 @@ const createSendToken = async (user, statusCode, res, req) => {
 
 exports.signup = async (req, res, next) => {
     try {
+        // Split name into firstName and lastName (required by Schema)
+        const nameParts = (req.body.name || '').trim().split(' ');
+        const firstName = nameParts[0] || 'New';
+        const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'User';
+
         const newUser = await User.create({
-            name: req.body.name,
             email: req.body.email,
             password: req.body.password,
             role: req.body.role,
-            tenantId: req.body.tenantId
+            tenantId: req.body.tenantId,
+            profile: {
+                firstName: firstName,
+                lastName: lastName
+            }
         });
 
         await createSendToken(newUser, 201, res, req);
@@ -116,20 +124,28 @@ exports.protect = async (req, res, next) => {
         token = req.cookies.jwt;
     }
 
+    console.log('[DEBUG] Protect Middleware. Headers:', req.headers.authorization ? 'Auth Header Present' : 'No Auth Header');
+    if (req.headers.authorization) console.log('[DEBUG] Auth Header Value:', req.headers.authorization.substring(0, 20) + '...');
+
     if (!token) {
         return res.status(401).json({ message: 'You are not logged in!' });
     }
 
     try {
         const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+        console.log(`[DEBUG] Token Verified. UserID: ${decoded.id}, Role: ${decoded.role}`);
+
         const currentUser = await User.findById(decoded.id);
         if (!currentUser) {
+            console.error(`[DEBUG] User not found in DB with ID: ${decoded.id}`);
             return res.status(401).json({ message: 'The user belonging to this token no longer does exist.' });
         }
+
         req.user = currentUser;
-        req.user.sessionId = decoded.sessionId; // Attach sessionId from token to user object for verifySession
+        req.user.sessionId = decoded.sessionId;
         next();
     } catch (err) {
+        console.error('[DEBUG] JWT Verification Error:', err.message);
         return res.status(401).json({ message: 'Invalid token' });
     }
 };
@@ -141,4 +157,13 @@ exports.restrictTo = (...roles) => {
         }
         next();
     };
+};
+
+exports.getMe = async (req, res) => {
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user: req.user
+        }
+    });
 };

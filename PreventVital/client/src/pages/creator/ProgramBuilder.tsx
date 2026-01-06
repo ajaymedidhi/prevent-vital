@@ -26,7 +26,7 @@ const ProgramBuilder = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3000/api/creator/programs', {
+            await axios.post('/api/creator/programs', {
                 title,
                 price: parseFloat(price),
                 description,

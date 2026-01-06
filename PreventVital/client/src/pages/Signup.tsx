@@ -22,15 +22,20 @@ const Signup = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/signup', {
+            const response = await axios.post('/api/auth/signup', {
                 name,
                 email,
                 password,
                 passwordConfirm: confirmPassword
             });
 
-            // Type assertion here or better response handling
-            const { user, token } = response.data.data as { user: User, token: string };
+            // Correctly extract data based on authController response structure
+            const { token } = response.data;
+            const { user } = response.data.data;
+
+            if (!token || !user) {
+                throw new Error('Invalid response from server');
+            }
 
             dispatch(setCredentials({ user, token }));
 

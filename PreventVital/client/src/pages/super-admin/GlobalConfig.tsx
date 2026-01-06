@@ -25,7 +25,7 @@ const GlobalConfig = () => {
 
     const fetchConfig = async () => {
         try {
-            const res = await axios.get('http://localhost:3000/api/admin/config/who-thresholds', {
+            const res = await axios.get('/api/admin/config/who-thresholds', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.data.config.value) {
@@ -40,7 +40,7 @@ const GlobalConfig = () => {
 
     const handleUpdate = async () => {
         try {
-            await axios.post('http://localhost:3000/api/admin/config/who-thresholds', {
+            await axios.post('/api/admin/config/who-thresholds', {
                 value: thresholds
             }, {
                 headers: { Authorization: `Bearer ${token}` }

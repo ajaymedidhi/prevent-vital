@@ -64,6 +64,10 @@ exports.verifySubscription = async (req, res) => {
             planId
         } = req.body;
 
+        console.log('[DEBUG] Verify Subscription Body:', JSON.stringify(req.body, null, 2)); // DEBUG LOG
+        console.log('[DEBUG] Plan ID to update:', planId); // DEBUG LOG
+        console.log('[DEBUG] User ID to update:', req.user._id); // DEBUG LOG
+
         const body = razorpay_payment_id + '|' + razorpay_subscription_id;
 
         const expectedSignature = crypto
@@ -74,19 +78,19 @@ exports.verifySubscription = async (req, res) => {
         // Allow bypass for mock test mode logic if signature matches OR if it's a specific mock flow
         if (expectedSignature === razorpay_signature || razorpay_subscription_id.includes('_mock')) {
 
-            // Update User
-            await User.findByIdAndUpdate(req.user._id, {
+            const updatedUser = await User.findByIdAndUpdate(req.user._id, {
                 subscription: {
-                    planId: planId, // 'gold', 'silver', etc.
+                    plan: planId, // Match schema field name 'plan'
                     status: 'active',
                     razorpaySubscriptionId: razorpay_subscription_id,
                     currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // Mock 30 days
                 }
-            });
+            }, { new: true }); // Return updated document
 
             res.status(200).json({
                 status: 'success',
-                message: 'Subscription verified and active'
+                message: 'Subscription verified and active',
+                user: updatedUser
             });
 
         } else {

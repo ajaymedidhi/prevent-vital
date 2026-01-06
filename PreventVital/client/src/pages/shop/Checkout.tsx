@@ -28,7 +28,7 @@ const Checkout = () => {
 
         try {
             // 1. Create Order
-            const orderRes = await axios.post('http://localhost:3000/api/shop/orders', {
+            const orderRes = await axios.post('/api/shop/orders', {
                 items: cart.map(i => ({ product: i._id, quantity: i.quantity })),
                 shippingAddress: address
             }, {
@@ -48,7 +48,7 @@ const Checkout = () => {
                 handler: async function (response: any) {
                     // 3. Verify Payment
                     try {
-                        await axios.post('http://localhost:3000/api/shop/orders/verify', {
+                        await axios.post('/api/shop/orders/verify', {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature
@@ -83,29 +83,78 @@ const Checkout = () => {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-2xl">
-            <h2 className="text-2xl font-bold mb-6">Checkout</h2>
-            <div className="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 className="font-semibold mb-4">Shipping Address</h3>
+            <h2 className="text-2xl font-bold mb-6 text-foreground">Checkout</h2>
+
+            {/* Order Summary */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border mb-6 text-gray-900">
+                <h3 className="font-semibold mb-4 text-lg">Order Summary</h3>
+                <div className="space-y-3 mb-4">
+                    {cart.map((item: any) => (
+                        <div key={item._id} className="flex justify-between items-center text-sm">
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium">{item.quantity}x</span>
+                                <div>
+                                    <p className="font-medium text-gray-900">{item.name}</p>
+                                    <p className="text-gray-500 text-xs text-left">₹{item.price}</p>
+                                </div>
+                            </div>
+                            <span className="font-semibold text-gray-900">₹{item.price * item.quantity}</span>
+                        </div>
+                    ))}
+                </div>
+                <div className="border-t pt-3 flex justify-between items-center">
+                    <span className="font-bold text-gray-700">Total</span>
+                    <span className="text-xl font-bold text-gray-900">₹{total}</span>
+                </div>
+            </div>
+
+            {/* Shipping Form */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border text-gray-900 border-gray-200">
+                <h3 className="font-semibold mb-4 text-lg">Shipping Address</h3>
                 <div className="space-y-4">
-                    <input className="w-full border p-2 rounded" placeholder="Street Address" value={address.street} onChange={e => setAddress({ ...address, street: e.target.value })} />
+                    <input
+                        className="w-full border-2 border-gray-300 p-3 rounded-lg text-gray-900 placeholder:text-gray-500 bg-gray-50 focus:bg-white focus:border-indigo-500 transition-colors"
+                        placeholder="Street Address"
+                        value={address.street}
+                        onChange={e => setAddress({ ...address, street: e.target.value })}
+                    />
                     <div className="grid grid-cols-2 gap-4">
-                        <input className="w-full border p-2 rounded" placeholder="City" value={address.city} onChange={e => setAddress({ ...address, city: e.target.value })} />
-                        <input className="w-full border p-2 rounded" placeholder="State" value={address.state} onChange={e => setAddress({ ...address, state: e.target.value })} />
+                        <input
+                            className="w-full border-2 border-gray-300 p-3 rounded-lg text-gray-900 placeholder:text-gray-500 bg-gray-50 focus:bg-white focus:border-indigo-500 transition-colors"
+                            placeholder="City"
+                            value={address.city}
+                            onChange={e => setAddress({ ...address, city: e.target.value })}
+                        />
+                        <input
+                            className="w-full border-2 border-gray-300 p-3 rounded-lg text-gray-900 placeholder:text-gray-500 bg-gray-50 focus:bg-white focus:border-indigo-500 transition-colors"
+                            placeholder="State"
+                            value={address.state}
+                            onChange={e => setAddress({ ...address, state: e.target.value })}
+                        />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <input className="w-full border p-2 rounded" placeholder="Postal Code" value={address.postalCode} onChange={e => setAddress({ ...address, postalCode: e.target.value })} />
-                        <input className="w-full border p-2 rounded" placeholder="Country" value={address.country} disabled />
+                        <input
+                            className="w-full border-2 border-gray-300 p-3 rounded-lg text-gray-900 placeholder:text-gray-500 bg-gray-50 focus:bg-white focus:border-indigo-500 transition-colors"
+                            placeholder="Postal Code"
+                            value={address.postalCode}
+                            onChange={e => setAddress({ ...address, postalCode: e.target.value })}
+                        />
+                        <input
+                            className="w-full border-2 border-gray-300 p-3 rounded-lg bg-gray-200 text-gray-600 font-medium cursor-not-allowed"
+                            placeholder="Country"
+                            value={address.country}
+                            disabled
+                        />
                     </div>
                 </div>
 
-                <div className="mt-8 border-t pt-4">
-                    <div className="flex justify-between items-center mb-6">
-                        <span className="font-bold text-gray-600">Total Amount</span>
-                        <span className="text-2xl font-bold">₹{total}</span>
-                    </div>
-                    <button onClick={handleCheckout} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">
-                        Pay Now
+                <div className="mt-8 border-t pt-6">
+                    <button onClick={handleCheckout} className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                        Pay ₹{total} (Pre-Book)
                     </button>
+                    <p className="text-center text-xs text-gray-400 mt-3">
+                        *Dev Mode: No payment required for testing.
+                    </p>
                 </div>
             </div>
         </div>

@@ -19,8 +19,13 @@ const Login = () => {
                 password,
             });
 
-            // Type assertion here or better response handling
-            const { user, token } = response.data.data as { user: User, token: string };
+            // Correctly extract data based on authController response structure
+            const { token } = response.data;
+            const { user } = response.data.data;
+
+            if (!token || !user) {
+                throw new Error('Invalid response from server');
+            }
 
             dispatch(setCredentials({ user, token }));
 
