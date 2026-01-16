@@ -1,8 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
+const { eventBus, EVENTS } = require('../events/eventBus');
 
 const { createSession } = require('../middleware/sessionMiddleware');
+const { ROLE_PERMISSIONS } = require('../config/rbacConfig');
 
 const signToken = (user, sessionId) => {
     const payload = {
@@ -19,8 +21,6 @@ const signToken = (user, sessionId) => {
         expiresIn: process.env.JWT_EXPIRE
     });
 };
-
-const { ROLE_PERMISSIONS } = require('../config/rbacConfig');
 
 const createSendToken = async (user, statusCode, res, req) => {
     // 1. Create a session in DB
@@ -77,6 +77,12 @@ exports.signup = async (req, res, next) => {
             }
         });
 
+        // Emit Registration Event
+        eventBus.emit(EVENTS.USER.REGISTERED, {
+            email: newUser.email,
+            name: `${newUser.profile.firstName} ${newUser.profile.lastName}`
+        });
+
         await createSendToken(newUser, 201, res, req);
     } catch (err) {
         res.status(400).json({
@@ -89,6 +95,7 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log('[DEBUG] Login Payload:', JSON.stringify(req.body, null, 2));
 
         if (!email || !password) {
             return res.status(400).json({ message: 'Please provide email and password' });

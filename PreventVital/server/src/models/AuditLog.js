@@ -32,12 +32,10 @@ const auditLogSchema = new mongoose.Schema({
     timestamp: {
         type: Date,
         default: Date.now,
-        index: true // Important for querying logs by date
+        index: true, // Important for querying logs by date
+        expires: 31536000 // 1 year (365 * 24 * 60 * 60)
     }
 });
-
-// TTL Index: Automatically delete logs after 1 year (compliance)
-auditLogSchema.index({ timestamp: 1 }, { expireAfterSeconds: 365 * 24 * 60 * 60 });
 
 const AuditLog = mongoose.model('AuditLog', auditLogSchema);
 

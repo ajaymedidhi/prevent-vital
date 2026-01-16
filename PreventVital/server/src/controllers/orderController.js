@@ -3,11 +3,9 @@ const crypto = require('crypto');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const invoiceService = require('../services/invoiceService');
+const { eventBus, EVENTS } = require('../events/eventBus');
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-    key_secret: process.env.RAZORPAY_KEY_SECRET || 'secret_placeholder'
-});
+// ... (razorpay init and createRazorpayOrder remain same)
 
 exports.createRazorpayOrder = async (req, res) => {
     try {
@@ -126,17 +124,16 @@ exports.verifyPaymentAndCreateOrder = async (req, res) => {
                 shippingAddress
             });
 
-            // Generate Invoice
-            // let invoiceUrl = '';
-            // try {
-            //     invoiceUrl = await invoiceService.generateInvoice(newOrder, req.user);
-            // } catch (e) {
-            //     console.error("Invoice generation failed", e);
-            // }
-
             // Save Invoice URL to Order
-            // newOrder.invoiceUrl = invoiceUrl;
             await newOrder.save();
+
+            // Emit Order Placed Event
+            eventBus.emit(EVENTS.SHOP.ORDER_PLACED, {
+                orderId: newOrder.orderId,
+                pricing: newOrder.pricing,
+                shippingAddress: newOrder.shippingAddress,
+                user: { email: req.user.email, name: `${req.user.profile?.firstName} ${req.user.profile?.lastName}` }
+            });
 
             const invoiceUrl = null; // Fix ReferenceError: invoiceUrl is not defined
 

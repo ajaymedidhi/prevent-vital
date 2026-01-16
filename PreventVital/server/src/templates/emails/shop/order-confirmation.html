@@ -1,0 +1,18 @@
+<h3>Order Confirmation #{{orderId}}</h3>
+<p>Hello {{name}},</p>
+<p>Thank you for your order! We have received it and will notify you once it ships.</p>
+
+<div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+    <h4>Order Summary</h4>
+    <p><strong>Total Amount:</strong> ₹{{total}}</p>
+    <p><strong>Shipping To:</strong><br>{{shippingAddress}}</p>
+    <ul>
+        {{#items}}
+        <li>{{name}} x {{quantity}}</li>
+        {{/items}}
+    </ul>
+</div>
+
+<a href="{{orderLink}}" class="button">View Order Details</a>
+
+<p>Thank you for shopping with us!</p>
