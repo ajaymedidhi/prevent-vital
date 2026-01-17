@@ -1,16 +1,17 @@
 import React from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store';
-import { Layout, FileText, PlusCircle, DollarSign, LogOut, Palette } from 'lucide-react';
+import { Layout, Clock, CreditCard, Building2, ShoppingBag, LogOut, Heart, User, Video, ShieldCheck } from 'lucide-react';
+import { RootState } from '../store';
 
-const CreatorLayout = () => {
+const CustomerLayout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useSelector((state: RootState) => state.auth);
 
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
-
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
     // Close sidebar on route change on mobile
@@ -26,11 +27,16 @@ const CreatorLayout = () => {
     const isActive = (path: string) => location.pathname.includes(path);
 
     const navItems = [
-        { path: '/creator/dashboard', label: 'Dashboard', icon: Layout },
-        { path: '/creator/programs', label: 'My Programs', icon: FileText },
-        { path: '/creator/programs/new', label: 'Create Program', icon: PlusCircle },
-        { path: '/creator/earnings', label: 'Earnings', icon: DollarSign },
+        { path: '/account/dashboard', label: 'Overview', icon: Layout },
+        { path: '/account/history', label: 'Order History', icon: Clock },
+        { path: '/account/billing', label: 'Membership & Billing', icon: CreditCard },
+        { path: '/shop', label: 'Shop Store', icon: ShoppingBag },
     ];
+
+    // Add Corporate link if user has corporate profile
+    if ((user as any)?.corporateId) {
+        navItems.splice(3, 0, { path: '/account/corporate', label: 'Corporate Program', icon: Building2 });
+    }
 
     return (
         <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -49,7 +55,7 @@ const CreatorLayout = () => {
             `}>
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 p-0.5 shadow-lg shadow-purple-900/20">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 p-0.5 shadow-lg shadow-teal-900/20">
                             <div className="w-full h-full bg-[#0F172A] rounded-[10px] flex items-center justify-center overflow-hidden">
                                 <img
                                     src="/images/logo-new.png"
@@ -62,19 +68,20 @@ const CreatorLayout = () => {
                             <h1 className="text-lg font-bold tracking-tight text-white leading-none">
                                 PREVENT VITAL
                             </h1>
-                            <p className="text-[10px] text-purple-400 font-medium mt-1 tracking-wider uppercase flex items-center gap-1">
-                                <Palette className="w-3 h-3" /> Creator Studio
+                            <p className="text-[10px] text-teal-400 font-medium mt-1 tracking-wider uppercase flex items-center gap-1">
+                                <Heart className="w-3 h-3" /> Member Portal
                             </p>
                         </div>
                     </div>
                 </div>
+
                 <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
                     {navItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive(item.path)
-                                ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/40 font-medium'
+                                ? 'bg-teal-600 text-white shadow-lg shadow-teal-900/40 font-medium'
                                 : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                                 }`}
                         >
@@ -82,13 +89,33 @@ const CreatorLayout = () => {
                             <span className="text-sm">{item.label}</span>
                         </Link>
                     ))}
+
+                    <div className="pt-4 mt-4 border-t border-gray-800">
+                        <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Health Tools</p>
+                        <Link
+                            to="/ai-health-assessment"
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 group"
+                        >
+                            <ShieldCheck className="w-5 h-5 text-slate-500 group-hover:text-white" />
+                            <span className="text-sm">AI Health Check</span>
+                        </Link>
+                    </div>
                 </nav>
+
                 <div className="p-4 border-t border-gray-800 bg-[#0b1120]">
-                    <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 hover:text-red-400 w-full px-4 py-2 transition-colors">
+                    <div className="flex items-center gap-3 mb-4 px-2">
+                        <div className="w-8 h-8 rounded-full bg-teal-900/50 border border-teal-700/50 flex items-center justify-center text-teal-400 text-xs font-bold">
+                            {user?.name?.charAt(0) || 'U'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{user?.name || 'User'}</p>
+                            <p className="text-xs text-slate-500 truncate capitalize">{user?.subscription?.plan || 'Free'} Plan</p>
+                        </div>
+                    </div>
+                    <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 hover:text-red-400 w-full px-2 py-2 transition-colors">
                         <LogOut className="w-4 h-4" />
-                        <span className="text-sm font-medium">Logout System</span>
+                        <span className="text-xs font-medium uppercase tracking-wide">Sign Out</span>
                     </button>
-                    <p className="text-[10px] text-center text-slate-600 mt-4">v2.1.0-PV</p>
                 </div>
             </aside>
 
@@ -109,16 +136,15 @@ const CreatorLayout = () => {
                             <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
                                 {navItems.find(i => isActive(i.path))?.label || 'Overview'}
                             </h2>
-                            <div className="text-xs md:text-sm text-gray-500 mt-1 hidden md:block">Welcome back, Creator</div>
+                            <div className="text-xs md:text-sm text-gray-500 mt-1 hidden md:block">
+                                Your personal health dashboard
+                            </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-4">
-                        <div className="flex items-center gap-2 bg-purple-50 px-2 md:px-3 py-1.5 rounded-full border border-purple-100">
-                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-purple-500 rounded-full animate-pulse"></span>
-                            <span className="text-[10px] md:text-xs font-bold text-purple-700 uppercase tracking-wide">Creator Mode</span>
-                        </div>
-                        <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded-full border border-gray-200 shadow-inner flex items-center justify-center font-bold text-slate-600 text-sm md:text-base">
-                            CR
+                        <div className="flex items-center gap-2 bg-teal-50 px-2 md:px-3 py-1.5 rounded-full border border-teal-100">
+                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-teal-500 rounded-full animate-pulse"></span>
+                            <span className="text-[10px] md:text-xs font-bold text-teal-700 uppercase tracking-wide">{(user as any)?.gamification?.points || 0} XP</span>
                         </div>
                     </div>
                 </header>
@@ -130,4 +156,4 @@ const CreatorLayout = () => {
     );
 };
 
-export default CreatorLayout;
+export default CustomerLayout;

@@ -1,42 +1,32 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import PricingTable from '@/features/subscription/PricingTable';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store';
-import { Building2, HeartPulse, GraduationCap, LogOut } from 'lucide-react';
-import { logout } from '../../store';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { HeartPulse, PlayCircle, ShieldCheck, ChevronRight, Activity, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { setCredentials } from '../../store'; // Direct import
+import { setCredentials } from '../../store';
+import axios from 'axios';
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { X } from 'lucide-react';
 
 const CustomerDashboard = () => {
     // Get real user from Redux
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [selectedVideo, setSelectedVideo] = useState<any>(null);
 
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate('/login');
-    };
-
-    const [activeTab, setActiveTab] = useState<'overview' | 'corporate' | 'billing' | 'history'>(
-        (user as any)?.corporateId ? 'corporate' : 'overview'
-    );
-
-    // Sync Profile on Mount (Fix for stale subscription)
+    // Sync Profile on Mount
     React.useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) return;
-
                 const res = await axios.get('/api/auth/me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-
                 if (res.data.data.user) {
                     dispatch(setCredentials({ user: res.data.data.user, token }));
                 }
@@ -47,313 +37,224 @@ const CustomerDashboard = () => {
         fetchProfile();
     }, [dispatch]);
 
+    const sampleVideos = [
+        {
+            id: 1,
+            title: "Morning Mobility Routine",
+            duration: "10 min",
+            category: "Yoga",
+            thumbnail: "https://images.unsplash.com/photo-1544367563-12123d8965cd?q=80&w=2070&auto=format&fit=crop",
+            type: 'youtube',
+            videoId: "klmBssEYkdU" // Yoga with Adriene
+        },
+        {
+            id: 2,
+            title: "How the Heart Actually Pumps",
+            duration: "5 min",
+            category: "Education",
+            thumbnail: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop",
+            type: 'youtube',
+            videoId: "H04d3rJCLCE" // TED-Ed
+        },
+        {
+            id: 3,
+            title: "Stress Relief Meditation",
+            duration: "15 min",
+            category: "Mindfulness",
+            thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1999&auto=format&fit=crop",
+            type: 'youtube',
+            videoId: "SlhBgt2deyk" // Wellness Channel
+        },
+    ];
+
     return (
-        <div className="container mx-auto py-10 px-4">
-            {/* HEADER & QUICK ACTIONS */}
-            <div className="bg-gradient-to-r from-indigo-900 to-indigo-700 text-white rounded-2xl p-8 mb-8 shadow-xl">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Welcome Banner */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-teal-900 to-emerald-800 rounded-3xl p-8 md:p-10 shadow-2xl text-white">
+                <div className="relative z-10 max-w-2xl">
+                    <h1 className="text-3xl md:text-4xl font-bold mb-4">Good Morning, {user?.name?.split(' ')[0] || 'Member'}!</h1>
+                    <p className="text-teal-100 text-lg mb-8 opacity-90 leading-relaxed">
+                        Your health journey is looking great today. You've maintained a <span className="font-bold text-white">{(user as any)?.gamification?.streaks?.current || 0}-day streak</span>!
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                        <Button
+                            onClick={() => navigate('/ai-health-assessment')}
+                            className="bg-white text-teal-900 hover:bg-teal-50 font-bold border-0 shadow-lg"
+                            size="lg"
+                        >
+                            <ShieldCheck className="mr-2 h-5 w-5" /> Start Health Check
+                        </Button>
+                        <Button
+                            onClick={() => navigate('/shop')}
+                            variant="outline"
+                            className="border-teal-400 text-teal-100 hover:bg-teal-800 hover:text-white"
+                            size="lg"
+                        >
+                            Visit Shop
+                        </Button>
+                    </div>
+                </div>
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-16 -mt-16"></div>
+                <div className="absolute bottom-0 right-20 w-80 h-80 bg-emerald-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20"></div>
+            </div>
+
+            {/* Vitals & Progress Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Live Vitals Card */}
+                <Card className="border-none shadow-md overflow-hidden bg-white group hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:scale-110 transition-transform">
+                                    <HeartPulse size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 text-lg">Health Vitals</h3>
+                                    <p className="text-xs text-gray-500">Last synced: Today, 9:00 AM</p>
+                                </div>
+                            </div>
+                            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse">LIVE</span>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="p-4 bg-gray-50 rounded-xl flex justify-between items-center group-hover:bg-red-50/30 transition-colors">
+                                <div>
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Heart Rate</p>
+                                    <p className="text-2xl font-bold text-gray-900">{(user as any)?.latestVitals?.heartRate || '--'}</p>
+                                </div>
+                                <Activity className="text-red-400 w-8 h-8 opacity-50" />
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="p-4 bg-gray-50 rounded-xl flex-1 group-hover:bg-blue-50/30 transition-colors">
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">BP</p>
+                                    <p className="text-xl font-bold text-gray-900">
+                                        {(user as any)?.latestVitals?.bloodPressure?.systolic || '--'}/
+                                        {(user as any)?.latestVitals?.bloodPressure?.diastolic || '--'}
+                                    </p>
+                                </div>
+                                <div className="p-4 bg-gray-50 rounded-xl flex-1 group-hover:bg-blue-50/30 transition-colors">
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">SpO2</p>
+                                    <p className="text-xl font-bold text-gray-900">{(user as any)?.latestVitals?.spo2 || '--'}%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Progress & Wellness Card */}
+                <Card className="border-none shadow-md overflow-hidden bg-white group hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-3 bg-yellow-50 text-yellow-600 rounded-xl group-hover:scale-110 transition-transform">
+                                    <TrendingUp size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 text-lg">Wellness Journey</h3>
+                                    <p className="text-xs text-gray-500">Level {(user as any)?.gamification?.level || 1} Achiever</p>
+                                </div>
+                            </div>
+                            <span className="text-yellow-600 font-bold text-xl">{(user as any)?.gamification?.points || 0} XP</span>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <div className="flex justify-between text-sm mb-2 font-medium">
+                                    <span className="text-gray-600">Daily Goal</span>
+                                    <span className="text-gray-900">75%</span>
+                                </div>
+                                <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full shadow-sm" style={{ width: '75%' }}></div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="text-center p-3 border border-dashed border-gray-200 rounded-lg">
+                                    <p className="text-2xl font-bold text-gray-900">{(user as any)?.gamification?.streaks?.current || 0}</p>
+                                    <p className="text-xs text-gray-500">Day Streak</p>
+                                </div>
+                                <div className="text-center p-3 border border-dashed border-gray-200 rounded-lg">
+                                    <p className="text-2xl font-bold text-gray-900">12</p>
+                                    <p className="text-xs text-gray-500">Badges Earned</p>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Sample Videos Section */}
+            <div>
+                <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name?.split(' ')[0] || 'Member'}!</h1>
-                        <p className="text-indigo-100 opacity-90">Your health journey is on track. You have <span className="font-bold text-white">{(user as any)?.gamification?.points || 0} Points</span> available.</p>
+                        <h2 className="text-xl font-bold text-gray-900">Recommended for You</h2>
+                        <p className="text-sm text-gray-500">Curated wellness content based on your profile.</p>
                     </div>
-                    <div className="flex gap-3">
-                        <button onClick={() => navigate('/shop')} className="bg-white text-indigo-900 px-6 py-2.5 rounded-lg font-bold hover:bg-indigo-50 transition-colors shadow-sm">
-                            Shop Store
-                        </button>
-                        <button onClick={() => navigate('/')} className="bg-white text-indigo-900 px-6 py-2.5 rounded-lg font-bold hover:bg-indigo-50 transition-colors shadow-sm">
-                            Back into Website
-                        </button>
-                        <button onClick={() => navigate('/ai-health-assessment')} className="bg-indigo-600 bg-opacity-30 border border-indigo-400 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-opacity-40 transition-all backdrop-blur-sm">
-                            Health Check
-                        </button>
-                    </div>
+                    <Button variant="ghost" className="text-teal-600 hover:text-teal-700">View All <ChevronRight className="w-4 h-4 ml-1" /></Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {sampleVideos.map((video) => (
+                        <div
+                            key={video.id}
+                            onClick={() => setSelectedVideo(video)}
+                            className="group relative rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md transition-all"
+                        >
+                            <div className="aspect-video bg-gray-900 relative">
+                                <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <PlayCircle className="w-12 h-12 text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all shadow-xl" />
+                                </div>
+                                <div className="absolute bottom-3 right-3 bg-black/70 text-white text-[10px] px-2 py-1 rounded font-medium">
+                                    {video.duration}
+                                </div>
+                            </div>
+                            <div className="bg-white p-4 border border-t-0 border-gray-100 rounded-b-xl">
+                                <span className="text-[10px] uppercase font-bold text-teal-600 tracking-wider block mb-1">{video.category}</span>
+                                <h3 className="font-bold text-gray-900 line-clamp-1 group-hover:text-teal-700 transition-colors">{video.title}</h3>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            {/* TABS NAVIGATION */}
-            <div className="flex space-x-1 mb-6 border-b border-gray-200 overflow-x-auto">
-                {['overview', 'history', 'billing'].map(tab => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab as any)}
-                        className={`pb-3 px-6 text-sm font-medium transition-all relative ${activeTab === tab
-                            ? 'text-indigo-600'
-                            : 'text-gray-500 hover:text-gray-700'
-                            }`}
-                    >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        {activeTab === tab && (
-                            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full" />
-                        )}
-                    </button>
-                ))}
-                {(user as any)?.corporateId && (
-                    <button
-                        onClick={() => setActiveTab('corporate')}
-                        className={`pb-3 px-6 text-sm font-medium transition-all relative ${activeTab === 'corporate' ? 'text-indigo-600' : 'text-gray-500'}`}
-                    >
-                        Corporate
-                        {activeTab === 'corporate' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full" />}
-                    </button>
-                )}
-            </div>
-
-            {/* DASHBOARD CONTENT AREA */}
-            <div className="min-h-[400px]">
-                {/* OVERVIEW TAB */}
-                {activeTab === 'overview' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
-                        <Card className="border-none shadow-md overflow-hidden">
-                            <CardHeader className="bg-blue-50 border-b border-blue-100 pb-4">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-2">
-                                        <HeartPulse className="text-blue-600" size={20} />
-                                        <CardTitle className="text-blue-900">Health Vitals</CardTitle>
-                                    </div>
-                                    <span className="text-xs font-medium bg-white text-blue-600 px-2 py-1 rounded-full border border-blue-200">Live</span>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="p-6">
-                                <div className="space-y-5">
-                                    {(user as any)?.latestVitals ? (
-                                        <>
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex flex-col">
-                                                    <span className="text-sm text-gray-500">Blood Pressure</span>
-                                                    <span className="text-xl font-bold text-gray-800">{(user as any).latestVitals.bloodPressure?.systolic}/{(user as any).latestVitals.bloodPressure?.diastolic} <span className="text-sm font-normal text-gray-400">mmHg</span></span>
-                                                </div>
-                                                <div className={`h-2 w-2 rounded-full ${(user as any).latestVitals.bloodPressure?.systolic < 120 ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex flex-col">
-                                                    <span className="text-sm text-gray-500">Heart Rate</span>
-                                                    <span className="text-xl font-bold text-gray-800">{(user as any).latestVitals.heartRate} <span className="text-sm font-normal text-gray-400">bpm</span></span>
-                                                </div>
-                                                <HeartPulse size={16} className="text-red-500 animate-pulse" />
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex flex-col">
-                                                    <span className="text-sm text-gray-500">SpO2</span>
-                                                    <span className="text-xl font-bold text-gray-800">{(user as any).latestVitals.spo2}%</span>
-                                                </div>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div className="text-center py-8">
-                                            <p className="text-gray-400 mb-4">No vital data synced yet.</p>
-                                            <Button variant="outline" size="sm">Connect Wearable</Button>
-                                        </div>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className="border-none shadow-md">
-                            <CardHeader className="bg-yellow-50 border-b border-yellow-100 pb-4">
-                                <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-2">
-                                        <Badge className="bg-yellow-500 hover:bg-yellow-600"><span className="text-xs">Level {(user as any)?.gamification?.level || 1}</span></Badge>
-                                        <CardTitle className="text-yellow-900">Your Progress</CardTitle>
-                                    </div>
-                                    <span className="text-yellow-700 font-bold">{(user as any)?.gamification?.points || 0} XP</span>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="p-6">
-                                <div className="space-y-6">
-                                    <div>
-                                        <div className="flex justify-between text-sm mb-2 text-gray-600">
-                                            <span>Daily Goal</span>
-                                            <span>75%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-100 rounded-full h-3">
-                                            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full shadow-sm" style={{ width: '75%' }}></div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-xl p-4 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-sm text-gray-500">Current Streak</p>
-                                            <p className="text-2xl font-bold text-gray-800">{(user as any)?.gamification?.streaks?.current || 0} <span className="text-sm font-normal text-gray-400">Days</span></p>
-                                        </div>
-                                        <div className="h-10 w-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600">
-                                            🔥
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
-
-                {/* CORPORATE CENTER TAB */}
-                {activeTab === 'corporate' && (
-                    <div className="space-y-6 animate-in fade-in">
-                        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 flex items-start gap-4">
-                            <div className="p-3 bg-indigo-100 rounded-lg text-indigo-700">
-                                <Building2 size={24} />
-                            </div>
-                            <div>
-                                <h2 className="text-lg font-bold text-indigo-900">Corporate Wellness Program</h2>
-                                <p className="text-indigo-700 text-sm mt-1">
-                                    You are enrolled via <strong>{(user as any)?.corporateProfile?.department || 'Your Company'}</strong>.
-                                    Employee ID: {(user as any)?.corporateProfile?.employeeId}
-                                </p>
-                            </div>
+            {/* Video Player Modal */}
+            <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
+                <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-none">
+                    <DialogHeader className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
+                        <div className="flex justify-between items-center text-white">
+                            <DialogTitle className="text-lg font-medium">{selectedVideo?.title}</DialogTitle>
                         </div>
+                    </DialogHeader>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-red-500">
-                                <CardContent className="p-6 flex items-center gap-4">
-                                    <div className="p-3 bg-red-50 text-red-600 rounded-full"><HeartPulse size={24} /></div>
-                                    <div>
-                                        <h3 className="font-bold text-lg">Health Assessment</h3>
-                                        <p className="text-sm text-gray-500">Complete your quarterly check</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                            <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-blue-500">
-                                <CardContent className="p-6 flex items-center gap-4">
-                                    <div className="p-3 bg-blue-50 text-blue-600 rounded-full"><GraduationCap size={24} /></div>
-                                    <div>
-                                        <h3 className="font-bold text-lg">Wellness Programs</h3>
-                                        <p className="text-sm text-gray-500">2 courses available</p>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                    {selectedVideo && (
+                        <div className="aspect-video w-full bg-black flex items-center justify-center">
+                            {selectedVideo.type === 'youtube' ? (
+                                <iframe
+                                    className="w-full h-full"
+                                    src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1`}
+                                    title={selectedVideo.title}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            ) : (
+                                <video
+                                    src={selectedVideo.videoUrl}
+                                    controls
+                                    autoPlay
+                                    className="w-full h-full"
+                                    controlsList="nodownload"
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
+                            )}
                         </div>
-                    </div>
-                )}
-
-                {/* BILLING TAB */}
-                {activeTab === 'billing' && (
-                    <div className="space-y-8 animate-in fade-in">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Membership Status</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-2xl font-bold capitalize">{(user as any)?.subscription?.plan || 'Free'} Plan</span>
-                                    <Badge className={(user as any)?.subscription?.status === 'active' ? 'bg-green-500' : 'bg-red-500'}>
-                                        {(user as any)?.subscription?.status || 'inactive'}
-                                    </Badge>
-                                </div>
-                                {(user as any)?.subscription?.plan === 'free' && (
-                                    <p className="text-muted-foreground mt-2">Upgrade to PreventVital Premium for advanced AI insights.</p>
-                                )}
-                            </CardContent>
-                        </Card>
-
-                        <div>
-                            <h2 className="text-xl font-bold mb-4">Available Plans</h2>
-                            <PricingTable />
-                        </div>
-                    </div>
-                )}
-
-                {/* HISTORY TAB */}
-                {activeTab === 'history' && (
-                    <OrderHistoryTab />
-                )}
-            </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
-    );
-};
-
-// ... OrderHistoryTab component stays mostly same but styling can be cleaner ...
-const OrderHistoryTab = () => {
-    const [orders, setOrders] = React.useState<any[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('/api/shop/orders/my', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setOrders(res.data.data.orders);
-            } catch (err) {
-                console.error("Failed to fetch orders", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchOrders();
-    }, []);
-
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center py-12 space-y-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <p className="text-gray-500">Loading your history...</p>
-        </div>
-    );
-
-    return (
-        <Card className="border-none shadow-md">
-            <CardHeader>
-                <CardTitle>Recent Orders</CardTitle>
-            </CardHeader>
-            <CardContent>
-                {orders.length === 0 ? (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg">
-                        <p className="text-gray-500 mb-2">No orders found.</p>
-                        <p className="text-sm text-gray-400">Visit our shop to start your health journey.</p>
-                    </div>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b text-left text-xs uppercase text-gray-500 font-semibold tracking-wider">
-                                    <th className="py-3 px-4">Order ID</th>
-                                    <th className="py-3 px-4">Date</th>
-                                    <th className="py-3 px-4">Items</th>
-                                    <th className="py-3 px-4 text-right">Total</th>
-                                    <th className="py-3 px-4 text-center">Status</th>
-                                    <th className="py-3 px-4 text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {orders.map((order) => (
-                                    <tr key={order._id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="py-4 px-4 font-medium text-indigo-900 border-l-4 border-transparent hover:border-indigo-500 transition-all">
-                                            {order.orderId || order._id.substr(-6).toUpperCase()}
-                                        </td>
-                                        <td className="py-4 px-4 text-sm text-gray-500">
-                                            {new Date(order.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <div className="space-y-1">
-                                                {order.items.map((item: any, idx: number) => (
-                                                    <div key={idx} className="text-sm font-medium text-gray-700">
-                                                        {item.quantity}x {item.productName || item.name || 'Product'}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-4 text-right font-bold text-gray-900">₹{(order.pricing?.total || order.totalAmount || 0).toLocaleString()}</td>
-                                        <td className="py-4 px-4 text-center">
-                                            <Badge variant={order.orderStatus === 'delivered' ? 'default' : 'secondary'} className={`capitalize px-3 py-1 ${order.orderStatus === 'placed' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : ''}`}>
-                                                {order.orderStatus || order.status}
-                                            </Badge>
-                                        </td>
-                                        <td className="py-4 px-4 text-center">
-                                            {order.invoiceUrl ? (
-                                                <a href={order.invoiceUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm underline decoration-indigo-200 hover:decoration-indigo-800 transition-all">
-                                                    Invoice
-                                                </a>
-                                            ) : (
-                                                <span className="text-gray-300 text-xs">Processing</span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </CardContent>
-        </Card>
     );
 };
 

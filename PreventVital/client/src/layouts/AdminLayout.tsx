@@ -2,21 +2,12 @@ import React from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../store';
-import { Layout, FileText, PlusCircle, DollarSign, LogOut, Palette } from 'lucide-react';
+import { Layout, Users, ShoppingCart, Calculator, AlertCircle, LogOut, Shield } from 'lucide-react';
 
-const CreatorLayout = () => {
+const AdminLayout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-
-    const [sidebarOpen, setSidebarOpen] = React.useState(false);
-
-    const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
-    // Close sidebar on route change on mobile
-    React.useEffect(() => {
-        setSidebarOpen(false);
-    }, [location.pathname]);
 
     const handleLogout = () => {
         dispatch(logout());
@@ -26,11 +17,21 @@ const CreatorLayout = () => {
     const isActive = (path: string) => location.pathname.includes(path);
 
     const navItems = [
-        { path: '/creator/dashboard', label: 'Dashboard', icon: Layout },
-        { path: '/creator/programs', label: 'My Programs', icon: FileText },
-        { path: '/creator/programs/new', label: 'Create Program', icon: PlusCircle },
-        { path: '/creator/earnings', label: 'Earnings', icon: DollarSign },
+        { path: '/admin/dashboard', label: 'Dashboard', icon: Layout },
+        { path: '/admin/users', label: 'User Management', icon: Users },
+        { path: '/admin/orders', label: 'Order Management', icon: ShoppingCart },
+        { path: '/admin/risk-calculator', label: 'Risk Calculator', icon: Calculator },
+        { path: '/admin/alerts', label: 'Critical Alerts', icon: AlertCircle },
     ];
+
+    const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+    const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+    // Close sidebar on route change on mobile
+    React.useEffect(() => {
+        setSidebarOpen(false);
+    }, [location.pathname]);
 
     return (
         <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -49,7 +50,7 @@ const CreatorLayout = () => {
             `}>
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 p-0.5 shadow-lg shadow-purple-900/20">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 p-0.5 shadow-lg shadow-blue-900/20">
                             <div className="w-full h-full bg-[#0F172A] rounded-[10px] flex items-center justify-center overflow-hidden">
                                 <img
                                     src="/images/logo-new.png"
@@ -62,8 +63,8 @@ const CreatorLayout = () => {
                             <h1 className="text-lg font-bold tracking-tight text-white leading-none">
                                 PREVENT VITAL
                             </h1>
-                            <p className="text-[10px] text-purple-400 font-medium mt-1 tracking-wider uppercase flex items-center gap-1">
-                                <Palette className="w-3 h-3" /> Creator Studio
+                            <p className="text-[10px] text-blue-400 font-medium mt-1 tracking-wider uppercase flex items-center gap-1">
+                                <Shield className="w-3 h-3" /> Admin Console
                             </p>
                         </div>
                     </div>
@@ -74,7 +75,7 @@ const CreatorLayout = () => {
                             key={item.path}
                             to={item.path}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive(item.path)
-                                ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/40 font-medium'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40 font-medium'
                                 : 'text-slate-400 hover:bg-slate-800 hover:text-white'
                                 }`}
                         >
@@ -109,16 +110,16 @@ const CreatorLayout = () => {
                             <h2 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
                                 {navItems.find(i => isActive(i.path))?.label || 'Overview'}
                             </h2>
-                            <div className="text-xs md:text-sm text-gray-500 mt-1 hidden md:block">Welcome back, Creator</div>
+                            <div className="text-xs md:text-sm text-gray-500 mt-1 hidden md:block">Welcome back, Admin</div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-4">
-                        <div className="flex items-center gap-2 bg-purple-50 px-2 md:px-3 py-1.5 rounded-full border border-purple-100">
-                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-purple-500 rounded-full animate-pulse"></span>
-                            <span className="text-[10px] md:text-xs font-bold text-purple-700 uppercase tracking-wide">Creator Mode</span>
+                        <div className="flex items-center gap-2 bg-blue-50 px-2 md:px-3 py-1.5 rounded-full border border-blue-100">
+                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                            <span className="text-[10px] md:text-xs font-bold text-blue-700 uppercase tracking-wide">Admin Mode</span>
                         </div>
                         <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-100 rounded-full border border-gray-200 shadow-inner flex items-center justify-center font-bold text-slate-600 text-sm md:text-base">
-                            CR
+                            AD
                         </div>
                     </div>
                 </header>
@@ -130,4 +131,4 @@ const CreatorLayout = () => {
     );
 };
 
-export default CreatorLayout;
+export default AdminLayout;

@@ -55,11 +55,20 @@ import AuditLogs from './pages/super-admin/AuditLogs';
 
 // Stubs for other roles
 // New Admin Pages
+import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/Dashboard';
+import AdminUsers from './pages/admin/Users';
+import AdminOrders from './pages/admin/Orders';
+import AdminAlerts from './pages/admin/Alerts';
 import RiskCalculator from './pages/admin/RiskCalculator';
 import { Outlet } from "react-router-dom";
 
 import CustomerDashboard from './pages/customer/CustomerDashboard';
+
+// Customer Pages
+import CustomerLayout from './layouts/CustomerLayout';
+import CustomerOrders from './pages/customer/Orders';
+import CustomerBilling from './pages/customer/Billing';
 
 const queryClient = new QueryClient();
 
@@ -126,27 +135,14 @@ const App = () => (
                         {/* ADMIN ROUTE GROUP */}
                         <Route path="/admin" element={
                             <ProtectedRoute allowedRoles={['admin']}>
-                                <div className="min-h-screen bg-gray-50 pb-12">
-                                    <nav className="bg-white border-b px-6 py-4 mb-4 flex justify-between items-center sticky top-0 z-30">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-8 w-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">PV</div>
-                                            <span className="font-bold text-lg hidden md:block">PreventVital Admin</span>
-                                        </div>
-                                        <div>
-                                            {/* Minimal Header for Admin - Logout is handled by global header in other layouts, but here we inline a simple nav or assume global header applies? 
-                                                Actually, Admin Dashboard probably needs its own Layout or just a wrapper. 
-                                                For simplicity, I'm adding a container wrapper here.
-                                            */}
-                                        </div>
-                                    </nav>
-                                    <div className="px-4">
-                                        <Outlet />
-                                    </div>
-                                </div>
+                                <AdminLayout />
                             </ProtectedRoute>
                         }>
                             <Route index element={<Navigate to="dashboard" replace />} />
                             <Route path="dashboard" element={<AdminDashboard />} />
+                            <Route path="users" element={<AdminUsers />} />
+                            <Route path="orders" element={<AdminOrders />} />
+                            <Route path="alerts" element={<AdminAlerts />} />
                             <Route path="risk-calculator" element={<RiskCalculator />} />
                         </Route>
 
@@ -175,11 +171,17 @@ const App = () => (
                         </Route>
 
                         {/* CUSTOMER ROUTE GROUP */}
-                        <Route path="/account/*" element={
+                        <Route path="/account" element={
                             <ProtectedRoute allowedRoles={['customer']}>
-                                <CustomerDashboard />
+                                <CustomerLayout />
                             </ProtectedRoute>
-                        } />
+                        }>
+                            <Route index element={<Navigate to="dashboard" replace />} />
+                            <Route path="dashboard" element={<CustomerDashboard />} />
+                            <Route path="history" element={<CustomerOrders />} />
+                            <Route path="billing" element={<CustomerBilling />} />
+                            {/* <Route path="corporate" element={<CustomerCorporate />} /> */}
+                        </Route>
 
                         <Route path="*" element={<NotFound />} />
                     </Routes>
