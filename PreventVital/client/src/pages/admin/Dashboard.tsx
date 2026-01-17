@@ -289,7 +289,133 @@ const CriticalAlerts = () => {
     );
 };
 
-// Main Admin Dashboard Component
+// Orders List Component
+const OrdersList = () => {
+    const [orders, setOrders] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState('');
+
+    useEffect(() => {
+        fetchOrders();
+    }, [statusFilter]);
+
+    const fetchOrders = async () => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams();
+            if (statusFilter) params.append('status', statusFilter);
+
+            const res = await axios.get('/api/admin/orders', { params });
+            setOrders(res.data.data.orders || []);
+        } catch (err) {
+            console.error('Failed to fetch orders:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateStatus = async (orderId: string, newStatus: string) => {
+        if (!confirm(`Change order status to ${newStatus}?`)) return;
+        try {
+            await axios.patch(`/api/admin/orders/${orderId}/status`, { status: newStatus });
+            fetchOrders(); // Refresh
+        } catch (err) {
+            alert('Failed to update status');
+        }
+    };
+
+    const getStatusColor = (status: string) => {
+        const colors: any = {
+            pending: 'bg-yellow-100 text-yellow-800',
+            placed: 'bg-blue-100 text-blue-800',
+            active: 'bg-blue-100 text-blue-800', // alias for placed sometimes
+            shipped: 'bg-purple-100 text-purple-800',
+            delivered: 'bg-green-100 text-green-800',
+            cancelled: 'bg-red-100 text-red-800'
+        };
+        return colors[status] || 'bg-gray-100 text-gray-800';
+    };
+
+    return (
+        <div>
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900">Recent Orders</h2>
+                <div className="flex gap-2">
+                    <select
+                        className="border rounded-md px-3 py-1 text-sm bg-gray-50"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="placed">Placed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            <div className="overflow-x-auto">
+                <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Order ID</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Customer</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Date</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Total</th>
+                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {loading ? (
+                            <tr><td colSpan={6} className="text-center py-8">Loading orders...</td></tr>
+                        ) : orders.length === 0 ? (
+                            <tr><td colSpan={6} className="text-center py-8 text-gray-500">No orders found.</td></tr>
+                        ) : (
+                            orders.map((order) => (
+                                <tr key={order._id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        #{order.orderId}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        {order.userId?.profile?.firstName || order.shippingAddress?.fullName || 'Unknown'}
+                                        <div className="text-xs text-gray-400">{order.userId?.email}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {new Date(order.createdAt).toLocaleDateString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                                        ₹{order.pricing?.total?.toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full capitalize ${getStatusColor(order.orderStatus)}`}>
+                                            {order.orderStatus}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                        <select
+                                            className="text-xs border rounded p-1"
+                                            value={order.orderStatus}
+                                            onChange={(e) => updateStatus(order._id, e.target.value)}
+                                        >
+                                            <option value="pending">Pending</option>
+                                            <option value="placed">Placed</option>
+                                            <option value="shipped">Shipped</option>
+                                            <option value="delivered">Delivered</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
 const AdminDashboard = () => {
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
@@ -389,8 +515,8 @@ const AdminDashboard = () => {
                                 key={item.id}
                                 onClick={() => handleMenuClick(item.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeView === item.id
-                                        ? 'bg-indigo-50 text-indigo-600'
-                                        : 'text-gray-700 hover:bg-gray-50'
+                                    ? 'bg-indigo-50 text-indigo-600'
+                                    : 'text-gray-700 hover:bg-gray-50'
                                     }`}
                             >
                                 <item.icon className="w-5 h-5" />
@@ -458,10 +584,8 @@ const AdminDashboard = () => {
                             )}
 
                             {activeView === 'orders' && (
-                                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-                                    <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                                    <h3 className="text-xl font-bold text-gray-900 mb-2">Orders Management</h3>
-                                    <p className="text-gray-600">Order management interface coming soon...</p>
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                                    <OrdersList />
                                 </div>
                             )}
                         </>

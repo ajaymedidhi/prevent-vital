@@ -13,6 +13,10 @@ router.patch('/users/:id/suspend', adminController.updateUserStatus);
 router.get('/config/who-thresholds', adminController.getWhoThresholds);
 router.post('/config/who-thresholds', adminController.updateWhoThresholds);
 
+// Order Management
+router.get('/orders', adminController.getAllOrders);
+router.patch('/orders/:id/status', adminController.updateOrderStatus);
+
 // Dashboard Routes
 router.get('/stats', adminController.getDashboardStats);
 router.get('/realtime', adminController.getRealtimeMetrics);

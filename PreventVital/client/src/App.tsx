@@ -49,6 +49,9 @@ import SuperAdminDashboard from './pages/super-admin/Dashboard';
 import GlobalConfig from './pages/super-admin/GlobalConfig';
 import UserManagement from './pages/super-admin/UserManagement';
 import Approvals from './pages/super-admin/Approvals';
+import TenantsPage from './pages/super-admin/Tenants';
+import MedicalPrograms from './pages/super-admin/MedicalPrograms';
+import AuditLogs from './pages/super-admin/AuditLogs';
 
 // Stubs for other roles
 // New Admin Pages
@@ -113,8 +116,11 @@ const App = () => (
                             <Route index element={<Navigate to="dashboard" replace />} />
                             <Route path="dashboard" element={<SuperAdminDashboard />} />
                             <Route path="config" element={<GlobalConfig />} />
+                            <Route path="tenants" element={<TenantsPage />} />
+                            <Route path="start-program" element={<MedicalPrograms />} />
                             <Route path="users" element={<UserManagement />} />
                             <Route path="approvals" element={<Approvals />} />
+                            <Route path="audit-logs" element={<AuditLogs />} />
                         </Route>
 
                         {/* ADMIN ROUTE GROUP */}

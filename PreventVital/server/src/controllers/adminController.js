@@ -3,10 +3,93 @@ const GlobalConfig = require('../models/GlobalConfig');
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 20;
+        const skip = (page - 1) * limit;
+
+        // Searching
+        const queryObj = {};
+        if (req.query.search) {
+            queryObj.$or = [
+                { email: { $regex: req.query.search, $options: 'i' } },
+                { 'profile.firstName': { $regex: req.query.search, $options: 'i' } },
+                { 'profile.lastName': { $regex: req.query.search, $options: 'i' } }
+            ];
+        }
+        if (req.query.role) queryObj.role = req.query.role;
+        if (req.query.status) queryObj.status = req.query.status;
+
+        const users = await User.find(queryObj)
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        const total = await User.countDocuments(queryObj);
+
         res.status(200).json({
             status: 'success',
+            results: users.length,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
             data: { users }
+        });
+    } catch (err) {
+        res.status(400).json({ status: 'fail', message: err.message });
+    }
+};
+
+exports.getAllOrders = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 20;
+        const skip = (page - 1) * limit;
+
+        const queryObj = {};
+        if (req.query.status) queryObj.orderStatus = req.query.status;
+        if (req.query.search) {
+            queryObj.orderId = { $regex: req.query.search, $options: 'i' };
+        }
+
+        const orders = await Order.find(queryObj)
+            .populate('userId', 'email profile.firstName profile.lastName')
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 });
+
+        const total = await Order.countDocuments(queryObj);
+
+        res.status(200).json({
+            status: 'success',
+            results: orders.length,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+            data: { orders }
+        });
+    } catch (err) {
+        res.status(400).json({ status: 'fail', message: err.message });
+    }
+};
+
+exports.updateOrderStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        const order = await Order.findByIdAndUpdate(req.params.id, { orderStatus: status }, {
+            new: true,
+            runValidators: true
+        }).populate('userId', 'email profile');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // TODO: Emit event here later for email notification
+        // eventBus.emit(EVENTS.SHOP.ORDER_STATUS_UPDATED, order);
+
+        res.status(200).json({
+            status: 'success',
+            data: { order }
         });
     } catch (err) {
         res.status(400).json({ status: 'fail', message: err.message });

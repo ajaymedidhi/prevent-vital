@@ -14,6 +14,9 @@ const contentRoutes = require('./routes/contentRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const vitalRoutes = require('./routes/vitalRoutes');
 
+// Initialize Email Service (registers event listeners)
+require('./services/email.service');
+
 dotenv.config();
 
 const app = express();
@@ -30,7 +33,8 @@ app.use(cookieParser());
 app.use(express.static('public')); // Serve static files like invoices
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', require('./routes/userRoutes')); // New User Routes
+app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/super-admin', require('./routes/superAdminRoutes')); // New Super Admin Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/creator', creatorRoutes);
