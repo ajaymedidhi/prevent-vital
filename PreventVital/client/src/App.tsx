@@ -27,6 +27,10 @@ import ProgramBuilder from './pages/creator/ProgramBuilder';
 import CorporateDashboard from './pages/corporate/Dashboard';
 import EmployeeManagement from './pages/corporate/EmployeeManagement';
 
+// Program Module Pages
+import ProgramListingPage from "./features/programs/pages/ProgramListingPage";
+import ProgramDetailPage from "./features/programs/pages/ProgramDetailPage";
+
 
 // Legacy Pages
 import Homepage from "./app/homepage/page";
@@ -99,7 +103,10 @@ const App = () => (
                             <Route path="/order-confirmation/:orderId" element={<OrderSuccessPage />} />
                             <Route path="/" element={<Homepage />} />
                             <Route path="/homepage" element={<Homepage />} />
-                            <Route path="/disease-prevention-programs" element={<DiseasePreventionProgramsPage />} />
+                            <Route path="/programs" element={<ProgramListingPage />} />
+                            <Route path="/programs/:id" element={<ProgramDetailPage />} />
+                            {/* Legacy Routes - Redirect or keep for SEO temporarily? */}
+                            <Route path="/disease-prevention-programs" element={<Navigate to="/programs?category=preventive" replace />} />
                             <Route path="/ai-health-assessment" element={<AiHealthAssessmentPage />} />
                             <Route path="/medical-professional-portal" element={<MedicalProfessionalPortalPage />} />
                             <Route path="/partnership-portal" element={<PartnershipPortalPage />} />
