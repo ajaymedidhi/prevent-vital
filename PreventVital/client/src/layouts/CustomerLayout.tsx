@@ -28,6 +28,7 @@ const CustomerLayout = () => {
 
     const navItems = [
         { path: '/account/dashboard', label: 'Overview', icon: Layout },
+        { path: '/account/programs', label: 'Programs', icon: Video },
         { path: '/account/history', label: 'Order History', icon: Clock },
         { path: '/account/billing', label: 'Membership & Billing', icon: CreditCard },
         { path: '/shop', label: 'Shop Store', icon: ShoppingBag },
@@ -109,7 +110,7 @@ const CustomerLayout = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-white truncate">{user?.name || 'User'}</p>
-                            <p className="text-xs text-slate-500 truncate capitalize">{user?.subscription?.plan || 'Free'} Plan</p>
+                            <p className="text-xs text-slate-500 truncate capitalize">{(user as any)?.subscription?.plan || 'Free'} Plan</p>
                         </div>
                     </div>
                     <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 hover:text-red-400 w-full px-2 py-2 transition-colors">

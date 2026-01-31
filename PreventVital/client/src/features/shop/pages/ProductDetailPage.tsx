@@ -9,14 +9,13 @@ import SpecsTable from '../components/SpecsTable';
 import VitalsIcons from '../components/VitalsIcons';
 import RegionBadge from '../components/RegionBadge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ChevronLeft, Truck, ShieldCheck, HeartPulse, Star, ShoppingCart, Share2 } from 'lucide-react';
 
 const ProductDetailPage = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { toast } = useToast();
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -50,7 +49,7 @@ const ProductDetailPage = () => {
     );
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white pb-24 lg:pb-0">
             {/* Breadcrumb / Back Navigation */}
             <div className="border-b border-gray-100 bg-white sticky top-0 z-20">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -90,8 +89,8 @@ const ProductDetailPage = () => {
                                         key={idx}
                                         onClick={() => setSelectedImage(img)}
                                         className={`w-24 h-24 rounded-2xl border-2 overflow-hidden flex-shrink-0 transition-all ${selectedImage === img
-                                                ? 'border-indigo-600 ring-2 ring-indigo-100 ring-offset-2'
-                                                : 'border-transparent bg-gray-50 hover:border-gray-300'
+                                            ? 'border-indigo-600 ring-2 ring-indigo-100 ring-offset-2'
+                                            : 'border-transparent bg-gray-50 hover:border-gray-300'
                                             }`}
                                     >
                                         <img src={img} alt="" className="w-full h-full object-cover p-2" />
@@ -164,8 +163,7 @@ const ProductDetailPage = () => {
                                 onClick={() => {
                                     if (product) {
                                         dispatch(addToCart(product));
-                                        toast({
-                                            title: "Added to Cart",
+                                        toast.success("Added to Cart", {
                                             description: `${product.name} has been added.`,
                                         });
                                     }
@@ -205,7 +203,34 @@ const ProductDetailPage = () => {
                     </div>
                 </div>
             </div>
-        </div>
+
+
+            {/* MOBILE STICKY ACTION BAR */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30 safe-area-bottom">
+                <div className="flex items-center gap-4">
+                    <div className="flex flex-col">
+                        <span className="text-gray-500 text-xs font-semibold">Total Price</span>
+                        <span className="text-2xl font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
+                    </div>
+                    <Button
+                        size="lg"
+                        className="flex-1 h-12 text-base font-bold bg-indigo-600 hover:bg-indigo-700 shadow-md rounded-xl"
+                        disabled={product.stock <= 0}
+                        onClick={() => {
+                            if (product) {
+                                dispatch(addToCart(product));
+                                toast.success("Added to Cart", {
+                                    description: `${product.name} has been added.`,
+                                });
+                            }
+                        }}
+                    >
+                        <ShoppingCart className="mr-2 w-5 h-5" />
+                        {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                    </Button>
+                </div>
+            </div>
+        </div >
     );
 };
 

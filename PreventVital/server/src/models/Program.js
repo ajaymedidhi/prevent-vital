@@ -31,10 +31,49 @@ const programSchema = new mongoose.Schema({
             duration: Number // minutes
         }
     ],
+    category: {
+        type: String,
+        enum: ['metabolic', 'cardiovascular', 'respiratory', 'mental', 'musculoskeletal', 'preventive'],
+        required: [true, 'Program must have a category'],
+        index: true
+    },
+    difficulty: {
+        type: String,
+        enum: ['Beginner', 'Intermediate', 'Advanced'],
+        required: [true, 'Program must have a difficulty level']
+    },
+    durationWeeks: {
+        type: Number,
+        required: true
+    },
+    totalSessions: {
+        type: Number,
+        required: true
+    },
+    averageRating: {
+        type: Number,
+        default: 4.5,
+        min: 1,
+        max: 5
+    },
+    reviewCount: {
+        type: Number,
+        default: 0
+    },
+    enrollmentCount: {
+        type: Number,
+        default: 0
+    },
+    pricingType: {
+        type: String,
+        enum: ['free', 'subscription', 'one-time'],
+        default: 'subscription'
+    },
     status: {
         type: String,
         enum: ['draft', 'published', 'archived'],
-        default: 'draft'
+        default: 'draft',
+        index: true
     },
     createdAt: {
         type: Date,

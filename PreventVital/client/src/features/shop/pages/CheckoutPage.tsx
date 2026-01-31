@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { clearCart } from '@/store/shopSlice';
-import { ShieldCheck, Lock, Truck, CreditCard, User, MapPin, Phone } from 'lucide-react';
+import { ShieldCheck, Lock, Truck, CreditCard, User, MapPin, Phone, Check } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const CheckoutPage = () => {
@@ -166,6 +166,41 @@ const CheckoutPage = () => {
                     <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-100">
                         <Lock size={14} />
                         <span className="font-semibold">256-bit SSL Encrypted</span>
+                    </div>
+                </div>
+
+                {/* PROGRESS STEPPER */}
+                <div className="mb-10 max-w-2xl mx-auto">
+                    <div className="flex items-center justify-between relative z-10">
+                        {/* Step 1: Cart (Completed) */}
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200">
+                                <span className="sr-only">Step 1</span>
+                                <Check size={20} className="stroke-[3]" /> {/* Need to import Check */}
+                            </div>
+                            <span className="text-sm font-bold text-indigo-900">Cart</span>
+                        </div>
+
+                        {/* Step 2: Information (Active) */}
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200 ring-4 ring-indigo-50">
+                                <span>2</span>
+                            </div>
+                            <span className="text-sm font-bold text-indigo-900">Information</span>
+                        </div>
+
+                        {/* Step 3: Payment (Pending) */}
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="w-10 h-10 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 font-bold">
+                                <span>3</span>
+                            </div>
+                            <span className="text-sm font-medium text-gray-400">Payment</span>
+                        </div>
+
+                        {/* Connecting Lines */}
+                        <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-10">
+                            <div className="h-full bg-indigo-600 w-1/2"></div>
+                        </div>
                     </div>
                 </div>
 

@@ -7,7 +7,7 @@ import RegionBadge from './RegionBadge';
 import { Product } from '@/store/shopSlice';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '@/store/shopSlice';
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ShoppingCart, Eye } from 'lucide-react';
 
 interface ProductCardProps {
@@ -17,7 +17,6 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, userRegion }) => {
     const dispatch = useDispatch();
-    const { toast } = useToast();
     const mainImage = product.images?.[0] || product.image || '/placeholder.png';
 
     return (
@@ -58,10 +57,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, userRegion }) => {
                         onClick={(e) => {
                             e.preventDefault();
                             dispatch(addToCart(product));
-                            toast({
-                                title: "Added to Cart",
+                            toast.success("Added to Cart", {
                                 description: `${product.name} is now in your cart.`,
-                                duration: 2000
+                                duration: 2000,
                             });
                         }}
                         title="Add to Cart"

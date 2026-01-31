@@ -16,6 +16,7 @@ export const Footer = () => {
       { label: 'About Us', href: '/about-us' },
       { label: 'Our Team', href: '/team' },
       { label: 'Partnership Portal', href: '/partnership-portal' },
+      { label: 'Contact Us', href: '/contact' },
       // { label: 'Research & Publications', href: '/' }, // Commented out until page exists or replaced
       // { label: 'Careers', href: '/' } // Commented out until page exists
     ],
@@ -46,35 +47,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-2 mb-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-blue-600">
-                <svg
-                  className="w-6 h-6 text-white"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 2L2 7L12 12L22 7L12 2Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M2 17L12 22L22 17"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M2 12L12 17L22 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+              <div className="flex items-center justify-center w-10 h-10">
+                <img src="/images/logo-new.png" alt="Prevent Vital" className="w-full h-full object-contain" />
               </div>
               <span className="text-xl font-bold tracking-tight">PreventVital</span>
             </Link>

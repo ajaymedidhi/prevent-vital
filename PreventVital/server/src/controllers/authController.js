@@ -167,10 +167,40 @@ exports.restrictTo = (...roles) => {
 };
 
 exports.getMe = async (req, res) => {
+    // Calculate Vital Score on the fly
+    let vitalScore = null;
+
+    if (req.user.latestVitals) {
+        try {
+            const VitalScoreCalculator = require('../utils/VitalScoreCalculator');
+            const calculator = new VitalScoreCalculator();
+
+            const vitalsInput = {
+                bloodPressure: req.user.latestVitals.bloodPressure,
+                heartRate: req.user.latestVitals.heartRate,
+                glucose: req.user.latestVitals.glucose, // Might be undefined
+                spo2: req.user.latestVitals.spo2,
+                bmi: req.user.profile?.bmi,
+                timestamp: req.user.latestVitals.lastUpdated,
+                // Context can be expanded later
+                context: {
+                    activity: 'resting',
+                    isAthlete: false
+                }
+            };
+
+            vitalScore = calculator.calculateVitalScore(vitalsInput);
+        } catch (err) {
+            console.error('Error calculating vital score:', err.message);
+            // Non-blocking error, just return null score
+        }
+    }
+
     res.status(200).json({
         status: 'success',
         data: {
-            user: req.user
+            user: req.user,
+            vitalScore
         }
     });
 };

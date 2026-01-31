@@ -42,6 +42,8 @@ app.use('/api/corporate', corporateRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/vitals', vitalRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/programs', require('./routes/programRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 // Database Connection
 

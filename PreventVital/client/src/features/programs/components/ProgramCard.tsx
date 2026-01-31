@@ -69,7 +69,7 @@ export default function ProgramCard({ program }: ProgramCardProps) {
                         )}
                     </div>
                     <Button asChild size="sm" className="gap-2">
-                        <Link to={`/programs/${program._id}`}>
+                        <Link to={`/account/programs/${program._id}`}>
                             View Details <ArrowRight size={14} />
                         </Link>
                     </Button>

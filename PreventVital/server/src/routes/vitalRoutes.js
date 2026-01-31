@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.use(authController.protect);
 
-router.get('/my-vitals', vitalController.getMyVitals);
+router.get('/', vitalController.getMyVitals);
+router.post('/', vitalController.logVitals);
 
 module.exports = router;

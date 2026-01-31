@@ -32,7 +32,7 @@ const CartPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50/50 py-12">
+        <div className="min-h-screen bg-gray-50/50 pt-24 pb-12">
             <div className="container mx-auto px-4 max-w-6xl">
                 <h1 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3">
                     Your Cart <span className="text-lg font-medium text-gray-500 bg-gray-200 px-3 py-1 rounded-full">{cart.length} items</span>
@@ -45,7 +45,7 @@ const CartPage = () => {
                         {cart.map((item: any) => (
                             <div key={item._id} className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-6 items-start sm:items-center animate-in slide-in-from-bottom-2 duration-500">
                                 {/* Image */}
-                                <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
+                                <div className="w-full h-48 sm:w-32 sm:h-32 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100">
                                     <img
                                         src={item.images?.[0] || item.image || '/placeholder.png'}
                                         alt={item.name}

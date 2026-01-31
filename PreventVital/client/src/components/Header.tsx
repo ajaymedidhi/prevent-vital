@@ -33,6 +33,7 @@ const Header = ({ className = '' }: HeaderProps) => {
     { label: 'AI Health Assessment', href: '/ai-health-assessment' },
     { label: 'Prevention Programs', href: '/disease-prevention-programs' },
     { label: 'Medical Portal', href: '/medical-professional-portal' },
+    { label: 'Contact Us', href: '/contact' },
   ];
 
   const secondaryNavItems = [
@@ -156,12 +157,12 @@ const Header = ({ className = '' }: HeaderProps) => {
                 </Link>
               </>
             )}
-            <Link
+            {/* <Link
               to="/ai-health-assessment"
               className="px-4 py-2 text-sm font-semibold text-accent-foreground bg-accent hover:bg-accent/90 rounded-lg transition-all duration-300 hover:scale-105 shadow-sm"
             >
               Get Started
-            </Link>
+            </Link> */}
           </div>
 
           <button

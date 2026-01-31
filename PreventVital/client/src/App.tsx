@@ -81,7 +81,7 @@ const App = () => (
         <QueryClientProvider client={queryClient}>
             <TooltipProvider>
                 <Toaster />
-                <Sonner />
+                <Sonner position="top-center" />
 
                 <BrowserRouter>
                     <ScrollToTop />
@@ -103,10 +103,9 @@ const App = () => (
                             <Route path="/order-confirmation/:orderId" element={<OrderSuccessPage />} />
                             <Route path="/" element={<Homepage />} />
                             <Route path="/homepage" element={<Homepage />} />
-                            <Route path="/programs" element={<ProgramListingPage />} />
-                            <Route path="/programs/:id" element={<ProgramDetailPage />} />
+                            {/* Program Routes moved to Customer Dashboard */}
                             {/* Legacy Routes - Redirect or keep for SEO temporarily? */}
-                            <Route path="/disease-prevention-programs" element={<Navigate to="/programs?category=preventive" replace />} />
+                            <Route path="/disease-prevention-programs" element={<DiseasePreventionProgramsPage />} />
                             <Route path="/ai-health-assessment" element={<AiHealthAssessmentPage />} />
                             <Route path="/medical-professional-portal" element={<MedicalProfessionalPortalPage />} />
                             <Route path="/partnership-portal" element={<PartnershipPortalPage />} />
@@ -185,6 +184,8 @@ const App = () => (
                         }>
                             <Route index element={<Navigate to="dashboard" replace />} />
                             <Route path="dashboard" element={<CustomerDashboard />} />
+                            <Route path="programs" element={<ProgramListingPage />} />
+                            <Route path="programs/:id" element={<ProgramDetailPage />} />
                             <Route path="history" element={<CustomerOrders />} />
                             <Route path="billing" element={<CustomerBilling />} />
                             {/* <Route path="corporate" element={<CustomerCorporate />} /> */}

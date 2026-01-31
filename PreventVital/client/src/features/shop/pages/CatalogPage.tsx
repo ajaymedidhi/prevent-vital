@@ -59,25 +59,7 @@ const CatalogPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50/50">
-            {/* HERO BANNER */}
-            <div className="relative bg-[#020817] text-white py-20 overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center opacity-20 filter blur-sm"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-[#020817] via-[#0b162e] to-transparent"></div>
-
-                <div className="container relative mx-auto px-4 z-10">
-                    <div className="max-w-2xl">
-                        <span className="text-indigo-400 font-bold tracking-wider uppercase text-sm mb-2 block animate-in fade-in slide-in-from-left-4 duration-500">Official Store</span>
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            Premium Health Tech <br /><span className="text-indigo-400">For a Better You.</span>
-                        </h1>
-                        <p className="text-lg text-gray-300 mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-5 duration-900">
-                            Discover clinical-grade wearables, advanced supplements, and home testing kits curated by medical experts.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="container mx-auto py-10 px-4">
+            <div className="container mx-auto pt-20 pb-10 px-4">
                 {/* FILTERS & SEARCH BAR */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 sticky top-[70px] z-30 bg-white/80 backdrop-blur-md p-4 rounded-xl border border-gray-100 shadow-sm">
 
@@ -88,8 +70,8 @@ const CatalogPage = () => {
                                 key={cat}
                                 onClick={() => setActiveCategory(cat)}
                                 className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${activeCategory === cat
-                                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                     }`}
                             >
                                 {cat}

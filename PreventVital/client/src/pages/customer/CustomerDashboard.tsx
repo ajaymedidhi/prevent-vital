@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '../../store';
 import axios from 'axios';
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { X, Plus } from 'lucide-react';
 
 const CustomerDashboard = () => {
     // Get real user from Redux
@@ -17,6 +19,60 @@ const CustomerDashboard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [selectedVideo, setSelectedVideo] = useState<any>(null);
+
+    const [isVitalsModalOpen, setIsVitalsModalOpen] = useState(false);
+    const [vitalForm, setVitalForm] = useState({
+        bloodPressureSys: '',
+        bloodPressureDia: '',
+        heartRate: '',
+        glucose: '',
+        spo2: '',
+        weight: ''
+    });
+
+    const handleVitalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setVitalForm({ ...vitalForm, [e.target.name]: e.target.value });
+    };
+
+    const handleVitalSubmit = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const payload: any = {};
+            if (vitalForm.bloodPressureSys && vitalForm.bloodPressureDia) {
+                payload.bloodPressure = {
+                    systolic: parseInt(vitalForm.bloodPressureSys),
+                    diastolic: parseInt(vitalForm.bloodPressureDia)
+                };
+            }
+            if (vitalForm.heartRate) payload.heartRate = parseInt(vitalForm.heartRate);
+            if (vitalForm.glucose) payload.glucose = parseInt(vitalForm.glucose);
+            if (vitalForm.spo2) payload.spo2 = parseInt(vitalForm.spo2);
+            if (vitalForm.weight) payload.weight = parseFloat(vitalForm.weight);
+
+            const res = await axios.post('/api/vitals', payload, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (res.data.status === 'success') {
+                const updatedUser = res.data.data.user;
+                if (res.data.data.vitalScore) {
+                    (updatedUser as any).vitalScore = res.data.data.vitalScore;
+                }
+                dispatch(setCredentials({ user: updatedUser, token }));
+                setIsVitalsModalOpen(false);
+                setVitalForm({
+                    bloodPressureSys: '',
+                    bloodPressureDia: '',
+                    heartRate: '',
+                    glucose: '',
+                    spo2: '',
+                    weight: ''
+                });
+            }
+        } catch (err) {
+            console.error("Failed to log vitals", err);
+        }
+    };
 
     // Sync Profile on Mount
     React.useEffect(() => {
@@ -28,7 +84,12 @@ const CustomerDashboard = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.data.data.user) {
-                    dispatch(setCredentials({ user: res.data.data.user, token }));
+                    const userData = res.data.data.user;
+                    // Attach vitalScore to user object manually for Redux store
+                    if (res.data.data.vitalScore) {
+                        (userData as any).vitalScore = res.data.data.vitalScore;
+                    }
+                    dispatch(setCredentials({ user: userData, token }));
                 }
             } catch (err) {
                 console.error("Failed to sync profile", err);
@@ -100,7 +161,7 @@ const CustomerDashboard = () => {
             </div>
 
             {/* Vitals & Progress Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Live Vitals Card */}
                 <Card className="border-none shadow-md overflow-hidden bg-white group hover:shadow-lg transition-all duration-300">
                     <CardContent className="p-6">
@@ -114,7 +175,12 @@ const CustomerDashboard = () => {
                                     <p className="text-xs text-gray-500">Last synced: Today, 9:00 AM</p>
                                 </div>
                             </div>
-                            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse">LIVE</span>
+                            <div className="flex items-center gap-2">
+                                <Button variant="outline" size="sm" onClick={() => setIsVitalsModalOpen(true)} className="h-8">
+                                    <Plus className="w-3 h-3 mr-1" /> Update
+                                </Button>
+                                <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full animate-pulse">LIVE</span>
+                            </div>
                         </div>
 
                         <div className="space-y-4">
@@ -142,9 +208,82 @@ const CustomerDashboard = () => {
                     </CardContent>
                 </Card>
 
+                {/* Safety Score Card (Dedicated) */}
+                <Card className="border-none shadow-md overflow-hidden bg-white group hover:shadow-lg transition-all duration-300 relative">
+                    {/* Decorative gradient background for high scores */}
+                    {(user as any)?.vitalScore?.status?.color === 'green' && (
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-green-600"></div>
+                    )}
+                    <CardContent className="p-6 h-full flex flex-col">
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className={`p-3 rounded-xl group-hover:scale-110 transition-transform 
+                                     ${(user as any)?.vitalScore?.status?.color === 'green' ? 'bg-green-50 text-green-600' :
+                                        (user as any)?.vitalScore?.status?.color === 'blue' ? 'bg-blue-50 text-blue-600' :
+                                            (user as any)?.vitalScore?.status?.color === 'yellow' ? 'bg-yellow-50 text-yellow-600' :
+                                                'bg-red-50 text-red-600'}`}>
+                                    <ShieldCheck size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 text-lg">Safety Score</h3>
+                                    <p className="text-xs text-gray-500">AI-Powered Risk Analysis</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {(user as any)?.vitalScore ? (
+                            <div className="flex-1 flex flex-col justify-center">
+                                <div className="flex items-end gap-3 mb-4">
+                                    <span className={`text-5xl font-bold tracking-tight
+                                    ${(user as any).vitalScore.status.color === 'green' ? 'text-green-600' :
+                                            (user as any).vitalScore.status.color === 'blue' ? 'text-blue-600' :
+                                                (user as any).vitalScore.status.color === 'yellow' ? 'text-yellow-600' :
+                                                    'text-red-600'}`}>
+                                        {(user as any).vitalScore.score}
+                                    </span>
+                                    <div className="mb-2">
+                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase
+                                        ${(user as any).vitalScore.status.color === 'green' ? 'bg-green-100 text-green-700' :
+                                                (user as any).vitalScore.status.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                                                    (user as any).vitalScore.status.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+                                                        'bg-red-100 text-red-700'}`}>
+                                            {(user as any).vitalScore.status.label}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                                        <div
+                                            className={`h-full rounded-full transition-all duration-1000 
+                                            ${(user as any).vitalScore.status.color === 'green' ? 'bg-gradient-to-r from-green-400 to-green-600' :
+                                                    (user as any).vitalScore.status.color === 'blue' ? 'bg-gradient-to-r from-blue-400 to-blue-600' :
+                                                        (user as any).vitalScore.status.color === 'yellow' ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
+                                                            'bg-gradient-to-r from-red-400 to-red-600'}`}
+                                            style={{ width: `${(user as any).vitalScore.score}%` }}
+                                        ></div>
+                                    </div>
+                                    {(user as any).vitalScore.recommendations?.[0] && (
+                                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 text-xs text-gray-600 italic">
+                                            "{(user as any).vitalScore.recommendations[0].message}"
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
+                                <ShieldCheck className="w-12 h-12 text-gray-200 mb-2" />
+                                <p className="text-sm text-gray-500">Log your vitals to generate your personalized safety score.</p>
+                                <Button size="sm" variant="outline" className="mt-4" onClick={() => navigate('/ai-health-assessment')}>Log Vitals</Button>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
                 {/* Progress & Wellness Card */}
                 <Card className="border-none shadow-md overflow-hidden bg-white group hover:shadow-lg transition-all duration-300">
                     <CardContent className="p-6">
+                        {/* Header */}
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-yellow-50 text-yellow-600 rounded-xl group-hover:scale-110 transition-transform">
@@ -159,15 +298,20 @@ const CustomerDashboard = () => {
                         </div>
 
                         <div className="space-y-6">
-                            <div>
-                                <div className="flex justify-between text-sm mb-2 font-medium">
-                                    <span className="text-gray-600">Daily Goal</span>
-                                    <span className="text-gray-900">75%</span>
+
+
+                            {/* Legacy Progress (Fallback) */}
+                            {!((user as any)?.vitalScore) && (
+                                <div>
+                                    <div className="flex justify-between text-sm mb-2 font-medium">
+                                        <span className="text-gray-600">Daily Goal</span>
+                                        <span className="text-gray-900">75%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full shadow-sm" style={{ width: '75%' }}></div>
+                                    </div>
                                 </div>
-                                <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full shadow-sm" style={{ width: '75%' }}></div>
-                                </div>
-                            </div>
+                            )}
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="text-center p-3 border border-dashed border-gray-200 rounded-lg">
@@ -218,6 +362,50 @@ const CustomerDashboard = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Vitals Input Modal */}
+            <Dialog open={isVitalsModalOpen} onOpenChange={setIsVitalsModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Update Health Vitals</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="sys">Systolic BP</Label>
+                                <Input id="sys" name="bloodPressureSys" placeholder="120" value={vitalForm.bloodPressureSys} onChange={handleVitalChange} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="dia">Diastolic BP</Label>
+                                <Input id="dia" name="bloodPressureDia" placeholder="80" value={vitalForm.bloodPressureDia} onChange={handleVitalChange} />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="hr">Heart Rate</Label>
+                                <Input id="hr" name="heartRate" placeholder="72" value={vitalForm.heartRate} onChange={handleVitalChange} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="weight">Weight (kg)</Label>
+                                <Input id="weight" name="weight" placeholder="70" value={vitalForm.weight} onChange={handleVitalChange} />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="glucose">Glucose</Label>
+                                <Input id="glucose" name="glucose" placeholder="100" value={vitalForm.glucose} onChange={handleVitalChange} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="spo2">SpO2 (%)</Label>
+                                <Input id="spo2" name="spo2" placeholder="98" value={vitalForm.spo2} onChange={handleVitalChange} />
+                            </div>
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button onClick={handleVitalSubmit}>Save Vitals</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Video Player Modal */}
             <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>

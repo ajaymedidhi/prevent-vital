@@ -3,23 +3,28 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { setCredentials } from '../store';
-import { User } from '../types/auth';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { ArrowLeft, Activity, Heart, Smartphone, Watch, Thermometer, ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await axios.post('/api/auth/login', {
                 email,
                 password,
             });
 
-            // Correctly extract data based on authController response structure
             const { token } = response.data;
             const { user } = response.data.data;
 
@@ -29,15 +34,12 @@ const Login = () => {
 
             dispatch(setCredentials({ user, token }));
 
-            // Check for redirect param
             const queryParams = new URLSearchParams(window.location.search);
             const redirectUrl = queryParams.get('redirect');
 
             if (redirectUrl) {
-                // If redirecting to checkout, ensure we go there
                 navigate(`/${redirectUrl}`);
             } else {
-                // Default based on role
                 switch (user.role) {
                     case 'super_admin':
                         navigate('/super-admin/dashboard');
@@ -46,7 +48,6 @@ const Login = () => {
                         navigate('/creator/dashboard');
                         break;
                     case 'corporate_admin':
-                        // Use corporateId as the tenantId in the URL
                         const cId = user.corporateId || user.tenantId;
                         if (cId) {
                             navigate(`/corporate/${cId}/dashboard`);
@@ -67,97 +68,200 @@ const Login = () => {
         } catch (error: any) {
             console.error('Login failed:', error);
             alert(error.response?.data?.message || 'Login failed');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="flex min-h-screen bg-background">
-            {/* Left Side - Hero Image */}
-            <div className="hidden lg:flex w-1/2 bg-black relative items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-10 bg-black/40" /> {/* Overlay */}
-                <img
-                    src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80"
-                    alt="Medical Technology"
-                    className="absolute inset-0 w-full h-full object-cover opacity-80"
+        <div className="flex min-h-screen bg-white font-sans text-slate-900">
+            {/* Left Side - Animated Graphic */}
+            <div className="hidden lg:flex w-1/2 relative bg-slate-50 items-center justify-center overflow-hidden border-r border-slate-100">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 z-0 opacity-[0.03]"
+                    style={{
+                        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(15 23 42) 1px, transparent 0)`,
+                        backgroundSize: '32px 32px'
+                    }}
                 />
-                <div className="relative z-20 text-white p-12 max-w-lg">
-                    <h2 className="text-4xl font-bold mb-6 leading-tight">Empowering Your Health Journey with AI Precision.</h2>
-                    <p className="text-lg text-gray-200">"PreventVital has completely transformed how I track my health. The AI insights are game-changing."</p>
-                    <div className="mt-4 flex items-center gap-4">
-                        <div className="h-1 w-12 bg-primary rounded-full"></div>
-                        <span className="text-sm font-semibold uppercase tracking-wider">Trusted by Professionals</span>
-                    </div>
+
+                {/* Plus Signs Deco */}
+                <div className="absolute top-12 left-12 text-slate-200">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="currentColor">
+                        <path d="M25 0H35V25H60V35H35V60H25V35H0V25H25V0Z" />
+                    </svg>
+                </div>
+                <div className="absolute bottom-12 right-12 text-slate-200">
+                    <svg width="40" height="40" viewBox="0 0 60 60" fill="currentColor">
+                        <path d="M25 0H35V25H60V35H35V60H25V35H0V25H25V0Z" />
+                    </svg>
+                </div>
+
+                <div className="relative z-10 scale-90 xl:scale-100">
+                    {/* Central Phone */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="relative w-[280px] h-[560px] bg-white rounded-[3rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border-8 border-slate-900 overflow-hidden flex flex-col z-20"
+                    >
+                        {/* Notch */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-30"></div>
+
+                        {/* Screen Content */}
+                        <div className="flex-1 bg-slate-50 pt-12 px-6 flex flex-col items-center">
+                            <div className="w-20 h-20 bg-transparent flex items-center justify-center mb-4">
+                                <img src="/images/logo-new.png" alt="Prevent Vital" className="w-full h-full object-contain" />
+                            </div>
+                            <h4 className="text-lg font-bold text-slate-900">Prevent Vital</h4>
+                            <p className="text-xs text-slate-500 mb-8">Your Personal Health Guardian</p>
+
+                            <div className="w-full space-y-3">
+                                <div className="h-24 rounded-2xl bg-white shadow-sm border border-slate-100 p-3 flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-500">
+                                        <Activity size={18} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="h-2 w-16 bg-slate-100 rounded mb-2"></div>
+                                        <div className="h-2 w-24 bg-slate-100 rounded"></div>
+                                    </div>
+                                </div>
+                                <div className="h-24 rounded-2xl bg-white shadow-sm border border-slate-100 p-3 flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+                                        <Thermometer size={18} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="h-2 w-16 bg-slate-100 rounded mb-2"></div>
+                                        <div className="h-2 w-24 bg-slate-100 rounded"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-auto mb-8 w-full">
+                                <div className="h-12 w-full bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20"></div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Orbit Ring 1 */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-dashed border-slate-300 rounded-full z-10 animate-[spin_60s_linear_infinite]" />
+                    <motion.div
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] z-10"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                    >
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-full shadow-lg border border-slate-100">
+                            <Watch className="w-6 h-6 text-slate-700" />
+                        </div>
+                    </motion.div>
+
+                    {/* Orbit Ring 2 */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-dashed border-slate-200 rounded-full z-0 animate-[spin_80s_linear_infinite_reverse]" />
+                    <motion.div
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] z-0"
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+                    >
+                        <div className="absolute top-1/4 left-[85%] bg-white p-3 rounded-full shadow-lg border border-slate-100">
+                            <Smartphone className="w-6 h-6 text-slate-700" />
+                        </div>
+                        <div className="absolute bottom-1/4 left-[15%] bg-white p-3 rounded-full shadow-lg border border-slate-100">
+                            <Activity className="w-6 h-6 text-slate-700" />
+                        </div>
+                    </motion.div>
                 </div>
             </div>
 
-            {/* Right Side - Form */}
-            <div className="relative flex-1 flex items-center justify-center p-8 lg:p-12">
-                <div className="w-full max-w-md space-y-8">
-                    <div className="absolute top-4 left-4 lg:top-12 lg:left-12">
-                        <Link to="/" className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="m15 18-6-6 6-6" /></svg>
+            {/* Right Side - Form Section */}
+            <div className="relative flex-1 flex flex-col items-center justify-center p-6 lg:p-20 bg-white">
+                <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="absolute top-6 left-6 lg:top-12 lg:left-12">
+                        <Link to="/" className="group flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center mr-2 group-hover:bg-blue-50 transition-colors">
+                                <ArrowLeft className="w-4 h-4" />
+                            </div>
                             Back to Home
                         </Link>
                     </div>
 
-                    <div className="text-center mt-8 lg:mt-0">
-                        <h2 className="text-3xl font-bold tracking-tight">Welcome Back</h2>
-                        <p className="text-muted-foreground mt-2">Sign in to access your personalized health dashboard.</p>
+                    <div className="text-center space-y-2 pt-12 lg:pt-0">
+                        {/* Logo */}
+                        <div className="flex flex-col items-center gap-2 mb-6">
+                            <div className="relative w-16 h-16">
+                                <img src="/images/logo-new.png" alt="Prevent Vital" className="w-full h-full object-contain" />
+                            </div>
+                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                                Prevent vital
+                            </span>
+                        </div>
+
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-900">Login</h2>
+                        <p className="text-slate-500 text-sm">Sign in to access your personalized health dashboard.</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium leading-none" htmlFor="email">Email Address</label>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder="name@example.com"
-                                className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <label className="text-sm font-medium leading-none" htmlFor="password">Password</label>
-                                <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</a>
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-slate-700">Email Address</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="h-12 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-lg"
+                                />
                             </div>
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                className="flex h-12 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
+
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password" className="text-slate-700">Password</Label>
+                                    <Link to="#" className="text-xs font-medium text-slate-500 hover:text-blue-600 hover:underline">
+                                        Forgot password?
+                                    </Link>
+                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="h-12 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 rounded-lg"
+                                />
+                            </div>
                         </div>
 
-                        <button
+                        <Button
                             type="submit"
-                            className="w-full flex h-12 items-center justify-center rounded-md bg-primary text-primary-foreground shadow hover:bg-primary/90 transition-colors font-medium text-base"
+                            className="w-full h-12 text-base font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/25 transition-all duration-300 rounded-lg"
+                            disabled={isLoading}
                         >
-                            Sign In
-                        </button>
+                            {isLoading ? 'Signing in...' : 'Sign In'}
+                        </Button>
                     </form>
 
-                    <div className="relative">
+                    <div className="relative my-8">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
+                            <span className="w-full border-t border-slate-200" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                            <span className="bg-white px-4 text-slate-400 font-medium">Or continue with</span>
                         </div>
                     </div>
 
-                    <div className="mt-6 text-center text-sm">
+                    <div className="text-center text-sm text-slate-500">
                         Don't have an account?{' '}
-                        <Link to="/signup" className="font-semibold text-primary hover:underline">
+                        <Link to="/signup" className="font-semibold text-sky-500 hover:text-sky-600 hover:underline transition-all">
                             Create an account
                         </Link>
                     </div>
+                </div>
+
+                {/* Footer Copyright */}
+                <div className="absolute bottom-6 text-xs text-slate-400">
+                    &copy; {new Date().getFullYear()} PreventVital. All rights reserved.
                 </div>
             </div>
         </div>

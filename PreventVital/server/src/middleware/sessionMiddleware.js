@@ -81,9 +81,11 @@ exports.verifySession = async (req, res, next) => {
     }
 
     // Update last active
-    session.lastActive = Date.now();
-    // Optional: Update IP/UserAgent if they change?
-    await session.save({ validateBeforeSave: false });
+    // Optimize: Only update lastActive if it's been more than 60 seconds
+    if (Date.now() - new Date(session.lastActive).getTime() > 60000) {
+        session.lastActive = Date.now();
+        await session.save({ validateBeforeSave: false });
+    }
 
     // Attach session to request for Audit logging
     req.session = session;
