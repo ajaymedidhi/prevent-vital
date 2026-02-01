@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -150,36 +148,9 @@
     overflow-wrap: break-word;
   }
 
-  /* Windows OS Specific Overrides - Aggressive Corrections */
-  html.os-windows {
-    /* Use zoom for IE/Edge/Chrome on Windows which handles this perfectly */
-    zoom: 0.9;
-    /* Fallback transformation if zoom is ignored (though zoom works best on Windows Chrome) */
-    -moz-transform: scale(0.9);
-    -moz-transform-origin: 0 0;
-  }
-
-  .os-windows body {
-    /* Force normal weight aggressively */
-    font-weight: 400 !important;
-    -webkit-font-smoothing: antialiased !important;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
-    /* Hack to force antialiasing on Windows */
-    letter-spacing: normal !important;
-  }
-
-  .os-windows h1,
-  .os-windows h2,
-  .os-windows h3,
-  .os-windows h4,
-  .os-windows h5,
-  .os-windows h6 {
-    /* Mechanically reduce weight */
-    font-weight: 500 !important;
-    /* Counteract the "wide" rendering of ClearType */
-    letter-spacing: -0.03em !important;
-  }
+  /* End Layer Base */
 }
+
 
 @layer utilities {
   .section-padding {
