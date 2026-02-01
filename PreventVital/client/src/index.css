@@ -111,7 +111,7 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     /* Global scale adjustment for premium density on all screens */
-    font-size: 95%;
+    font-size: 90%;
   }
 
   body {
@@ -121,6 +121,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Tighter tracking for cleaner look */
+    letter-spacing: -0.01em;
   }
 
   h1,
@@ -129,7 +131,8 @@
   h4,
   h5,
   h6 {
-    @apply font-semibold tracking-tight text-foreground;
+    /* Switch to Medium (500) globally to reduce boldness */
+    @apply font-medium tracking-tight text-foreground;
     text-wrap: balance;
   }
 
