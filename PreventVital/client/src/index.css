@@ -110,6 +110,8 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Global scale adjustment for premium density on all screens */
+    font-size: 95%;
   }
 
   body {
@@ -148,10 +150,7 @@
     overflow-wrap: break-word;
   }
 
-  /* Windows Scale Correction: slightly reduce root size to match macOS density */
-  html.win-os {
-    font-size: 15px;
-  }
+  /* End Layer Base */
 }
 
 
