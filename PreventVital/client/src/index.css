@@ -148,7 +148,10 @@
     overflow-wrap: break-word;
   }
 
-  /* End Layer Base */
+  /* Windows Scale Correction: slightly reduce root size to match macOS density */
+  html.win-os {
+    font-size: 15px;
+  }
 }
 
 
