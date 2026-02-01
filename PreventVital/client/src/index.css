@@ -111,7 +111,7 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     /* Global scale adjustment for premium density on all screens */
-    font-size: 90%;
+    font-size: 87.5%;
   }
 
   body {
