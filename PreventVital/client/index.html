@@ -11,6 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
     rel="stylesheet">
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    if (navigator.userAgent.indexOf("Win") != -1) {
+      document.documentElement.classList.add("os-windows");
+    }
+  </script>
 </head>
 
 <body>

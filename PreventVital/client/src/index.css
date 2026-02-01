@@ -149,6 +149,24 @@
     @apply leading-relaxed;
     overflow-wrap: break-word;
   }
+
+  html.os-windows {
+    font-size: 95%;
+  }
+
+  .os-windows body {
+    font-weight: 400;
+    -webkit-font-smoothing: auto;
+  }
+
+  .os-windows h1,
+  .os-windows h2,
+  .os-windows h3,
+  .os-windows h4,
+  .os-windows h5,
+  .os-windows h6 {
+    font-weight: 500;
+  }
 }
 
 @layer utilities {
