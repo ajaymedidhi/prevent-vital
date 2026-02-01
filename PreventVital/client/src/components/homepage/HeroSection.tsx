@@ -77,7 +77,7 @@ const HeroSection = ({ className = '' }: HeroSectionProps) => {
             </div>
 
             {/* Content */}
-            <div className="relative z-20 container mx-auto px-4 h-full flex flex-col justify-center md:justify-start pt-24 md:pt-20">
+            <div className="relative z-20 container mx-auto px-4 h-full flex flex-col justify-center md:justify-start pt-24 md:pt-16">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={currentSlide}
