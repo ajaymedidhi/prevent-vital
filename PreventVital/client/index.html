@@ -12,9 +12,24 @@
     rel="stylesheet">
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script>
-    if (navigator.userAgent.indexOf("Win") != -1) {
-      document.documentElement.classList.add("os-windows");
-    }
+    (function () {
+      var isWin = false;
+      // Robust Check
+      if (typeof navigator !== 'undefined') {
+        if (navigator.userAgentData && navigator.userAgentData.platform === "Windows") {
+          isWin = true;
+        } else if (navigator.userAgent && navigator.userAgent.toLowerCase().indexOf("win") !== -1) {
+          isWin = true;
+        } else if (navigator.platform && navigator.platform.toLowerCase().indexOf("win") !== -1) {
+          isWin = true;
+        }
+      }
+
+      if (isWin) {
+        document.documentElement.classList.add("os-windows");
+        console.log("PreventVital: Windows OS Detected - Applying Fixes");
+      }
+    })();
   </script>
 </head>
 

@@ -151,12 +151,15 @@
   }
 
   html.os-windows {
-    font-size: 95%;
+    font-size: 92.5%;
+    /* Aggressively reduced from 95% */
   }
 
   .os-windows body {
     font-weight: 400;
     -webkit-font-smoothing: auto;
+    letter-spacing: -0.015em;
+    /* Slight tightening globally */
   }
 
   .os-windows h1,
@@ -166,6 +169,8 @@
   .os-windows h5,
   .os-windows h6 {
     font-weight: 500;
+    letter-spacing: -0.025em;
+    /* Tighter headings */
   }
 }
 
