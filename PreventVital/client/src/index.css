@@ -150,16 +150,22 @@
     overflow-wrap: break-word;
   }
 
+  /* Windows OS Specific Overrides - Aggressive Corrections */
   html.os-windows {
-    font-size: 92.5%;
-    /* Aggressively reduced from 95% */
+    /* Use zoom for IE/Edge/Chrome on Windows which handles this perfectly */
+    zoom: 0.9;
+    /* Fallback transformation if zoom is ignored (though zoom works best on Windows Chrome) */
+    -moz-transform: scale(0.9);
+    -moz-transform-origin: 0 0;
   }
 
   .os-windows body {
-    font-weight: 400;
-    -webkit-font-smoothing: auto;
-    letter-spacing: -0.015em;
-    /* Slight tightening globally */
+    /* Force normal weight aggressively */
+    font-weight: 400 !important;
+    -webkit-font-smoothing: antialiased !important;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+    /* Hack to force antialiasing on Windows */
+    letter-spacing: normal !important;
   }
 
   .os-windows h1,
@@ -168,9 +174,10 @@
   .os-windows h4,
   .os-windows h5,
   .os-windows h6 {
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    /* Tighter headings */
+    /* Mechanically reduce weight */
+    font-weight: 500 !important;
+    /* Counteract the "wide" rendering of ClearType */
+    letter-spacing: -0.03em !important;
   }
 }
 
