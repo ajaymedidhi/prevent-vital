@@ -44,10 +44,10 @@ export default function Contact() {
                 <div className="bg-[#020817] text-white pt-32 pb-20 px-4">
                     <div className="container mx-auto max-w-4xl text-center">
                         <span className="text-indigo-400 font-bold tracking-wider uppercase text-xs mb-4 block">Get Support</span>
-                        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-                            How can we <span className="text-indigo-500">help you?</span>
+                        <h1 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight text-white">
+                            How can we <span className="text-indigo-400">help you?</span>
                         </h1>
-                        <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                        <p className="text-lg text-gray-300 max-w-2xl mx-auto">
                             Whether you have questions about our products, need technical assistance, or want to discuss a partnership, we're here to listen.
                         </p>
                     </div>

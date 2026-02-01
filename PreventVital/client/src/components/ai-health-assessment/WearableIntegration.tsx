@@ -22,23 +22,23 @@ export default function WearableIntegration({ onConnect }: WearableIntegrationPr
     ]);
 
     return (
-        <div className="bg-card rounded-lg p-6 border border-border shadow-sm">
-            <div className="flex items-center space-x-3 mb-4">
-                <LinkIcon size={24} className="text-primary" />
-                <h3 className="text-lg font-semibold text-foreground">Connect Wearable Device</h3>
+        <div className="w-full">
+            <div className="mb-6 text-center space-y-2">
+                <h3 className="text-lg font-semibold text-slate-900">Connect Wearable Device</h3>
+                <p className="text-sm text-slate-500 max-w-lg mx-auto">
+                    Enhance assessment accuracy by connecting your wearable device for real-time health data.
+                </p>
             </div>
-            <p className="text-sm text-muted-foreground mb-6">
-                Enhance assessment accuracy by connecting your wearable device for real-time health data.
-            </p>
-            <div className="grid grid-cols-2 gap-3">
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {devices.map((device) => (
                     <button
                         key={device.id}
                         onClick={() => onConnect(device.id)}
-                        className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-border hover:border-primary hover:bg-primary/5 transition-all duration-200"
+                        className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group"
                     >
-                        <device.icon size={32} className="text-primary mb-2" />
-                        <span className="text-sm font-medium text-foreground">{device.name}</span>
+                        <device.icon size={28} className="text-slate-400 group-hover:text-blue-500 mb-3 transition-colors" />
+                        <span className="text-sm font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{device.name}</span>
                     </button>
                 ))}
             </div>

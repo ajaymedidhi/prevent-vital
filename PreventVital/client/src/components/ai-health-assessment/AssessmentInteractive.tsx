@@ -41,9 +41,6 @@ export default function AssessmentInteractive() {
     const [answers, setAnswers] = useState<Answer[]>([]);
     const [showResults, setShowResults] = useState(false);
     const [showWearablePrompt, setShowWearablePrompt] = useState(true);
-
-    // In standard React SPA, hydration isn't the same issue as Next.js, 
-    // but we can keep a loading state if needed for consistency or async ops.
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
@@ -276,33 +273,52 @@ export default function AssessmentInteractive() {
         (Array.isArray(currentAnswer) ? currentAnswer.length > 0 : true);
 
     return (
-        <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto pb-12">
             {!showResults ? (
                 <>
-                    {showWearablePrompt && currentStep === 1 && (
-                        <WearableIntegration onConnect={handleWearableConnect} />
-                    )}
+                    {/* Modern Progress Header */}
+                    <div className="mb-8">
+                        {showWearablePrompt && currentStep === 1 && (
+                            <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 p-6 border border-slate-100 mb-6 mx-auto max-w-2xl transform transition-all duration-500 hover:scale-[1.01]">
+                                <WearableIntegration onConnect={handleWearableConnect} />
+                            </div>
+                        )}
 
-                    <AssessmentProgress
-                        currentStep={currentStep}
-                        totalSteps={totalSteps}
-                        completionPercentage={completionPercentage}
-                    />
+                        <div className="flex justify-between items-end mb-2 px-2">
+                            <div className="text-sm font-semibold text-slate-400 uppercase tracking-widest">
+                                Question {currentStep} of {totalSteps}
+                            </div>
+                            <div className="text-xl font-bold text-primary font-mono">
+                                {completionPercentage}%
+                            </div>
+                        </div>
+                        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-700 ease-out"
+                                style={{ width: `${completionPercentage}%` }}
+                            />
+                        </div>
+                    </div>
 
-                    <QuestionCard
-                        question={currentQuestion.question}
-                        description={currentQuestion.description}
-                        type={currentQuestion.type}
-                        options={currentQuestion.options}
-                        selectedValue={currentAnswer}
-                        onAnswer={(value) => handleAnswer(currentQuestion.id, value)}
-                    />
+                    <div className="animate-fade-in-up">
+                        <QuestionCard
+                            question={currentQuestion.question}
+                            description={currentQuestion.description}
+                            type={currentQuestion.type}
+                            options={currentQuestion.options}
+                            selectedValue={currentAnswer}
+                            onAnswer={(value) => handleAnswer(currentQuestion.id, value)}
+                        />
+                    </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mt-8 px-2 max-w-2xl mx-auto">
                         <button
                             onClick={handlePrevious}
                             disabled={currentStep === 1}
-                            className="flex items-center space-x-2 px-6 py-3 rounded-lg border-2 border-border text-foreground font-medium hover:bg-muted transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${currentStep === 1
+                                ? 'opacity-0 cursor-default'
+                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                                }`}
                         >
                             <ChevronLeft size={20} />
                             <span>Previous</span>
@@ -311,84 +327,89 @@ export default function AssessmentInteractive() {
                         <button
                             onClick={handleNext}
                             disabled={!isAnswered}
-                            className="flex items-center space-x-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                            className="flex items-center space-x-2 px-8 py-4 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl hover:shadow-2xl shadow-slate-900/10 hover:translate-x-1"
                         >
-                            <span>{currentStep === totalSteps ? 'View Results' : 'Next'}</span>
+                            <span>{currentStep === totalSteps ? 'Analyze' : 'Continue'}</span>
                             <ChevronRight size={20} />
                         </button>
                     </div>
                 </>
             ) : (
-                <>
-                    <div className="bg-gradient-to-br from-primary/10 via-emerald-500/10 to-blue-500/10 rounded-lg p-8 border border-border">
-                        <div className="flex items-center space-x-3 mb-4">
-                            <CheckCircle size={32} className="text-emerald-600" />
-                            <h2 className="text-2xl lg:text-3xl font-bold text-foreground">
-                                Assessment Complete!
+                <div className="space-y-12 animate-fade-in-up">
+                    <div className="relative overflow-hidden bg-slate-900 rounded-[2rem] p-8 lg:p-12 text-white shadow-2xl shadow-blue-900/20">
+                        {/* Background Blobs */}
+                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none" />
+
+                        <div className="relative z-10 text-center max-w-2xl mx-auto">
+                            <div className="inline-flex items-center justify-center p-4 bg-white/10 rounded-full backdrop-blur-md mb-6 ring-1 ring-white/20">
+                                <CheckCircle size={40} className="text-emerald-400" />
+                            </div>
+                            <h2 className="text-3xl lg:text-5xl font-bold mb-4 tracking-tight">
+                                Assessment Complete
                             </h2>
+                            <p className="text-lg text-slate-300 leading-relaxed">
+                                Your comprehensive health profile has been analyzed using our advanced predictive algorithms.
+                            </p>
                         </div>
-                        <p className="text-muted-foreground">
-                            Your comprehensive health assessment has been analyzed using our AI-powered predictive analytics. Below are your personalized health scores and recommendations.
-                        </p>
                     </div>
 
                     <div>
-                        <h3 className="text-xl font-semibold text-foreground mb-4">Your Health Scores</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {healthScores.map((score) => (
-                                <HealthScoreCard
-                                    key={score.category}
-                                    score={score.score}
-                                    category={score.category}
-                                    status={score.status}
-                                    description={score.description}
-                                />
+                        <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
+                            <span className="w-1.5 h-8 bg-blue-600 rounded-full mr-4"></span>
+                            Your Health Scores
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {healthScores.map((score, index) => (
+                                <div key={score.category} style={{ animationDelay: `${index * 100}ms` }} className="animate-fade-in-up">
+                                    <HealthScoreCard
+                                        score={score.score}
+                                        category={score.category}
+                                        status={score.status}
+                                        description={score.description}
+                                    />
+                                </div>
                             ))}
                         </div>
                     </div>
 
                     <div>
-                        <h3 className="text-xl font-semibold text-foreground mb-4">
-                            Personalized Recommendations
+                        <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
+                            <span className="w-1.5 h-8 bg-amber-500 rounded-full mr-4"></span>
+                            Recommended Actions
                         </h3>
                         <ResultsCard recommendations={recommendations} />
                     </div>
 
-                    <div className="bg-card rounded-lg p-6 lg:p-8 border border-border shadow-md">
-                        <h3 className="text-xl font-semibold text-foreground mb-4">Next Steps</h3>
-                        <div className="space-y-4 mb-6">
-                            <div className="flex items-start space-x-3">
-                                <CheckCircle size={20} className="text-emerald-600 mt-1 flex-shrink-0" />
-                                <p className="text-sm text-muted-foreground">
-                                    Schedule a consultation with our medical professionals to discuss your results in detail
-                                </p>
-                            </div>
-                            <div className="flex items-start space-x-3">
-                                <CheckCircle size={20} className="text-emerald-600 mt-1 flex-shrink-0" />
-                                <p className="text-sm text-muted-foreground">
-                                    Enroll in recommended prevention programs tailored to your health profile
-                                </p>
-                            </div>
-                            <div className="flex items-start space-x-3">
-                                <CheckCircle size={20} className="text-emerald-600 mt-1 flex-shrink-0" />
-                                <p className="text-sm text-muted-foreground">
-                                    Connect your wearable devices for continuous health monitoring and real-time insights
-                                </p>
-                            </div>
+                    <div className="bg-white rounded-[2rem] p-8 lg:p-12 border border-slate-100 shadow-xl shadow-slate-200/50">
+                        <h3 className="text-2xl font-bold text-slate-900 mb-8 text-center">Your Next Steps</h3>
+                        <div className="space-y-6 max-w-3xl mx-auto mb-10">
+                            {[
+                                "Schedule a consultation with our medical professionals",
+                                "Enroll in recommended prevention programs",
+                                "Connect wearable devices for continuous monitoring"
+                            ].map((step, i) => (
+                                <div key={i} className="flex items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center mr-4 flex-shrink-0">
+                                        <span className="text-emerald-600 font-bold">{i + 1}</span>
+                                    </div>
+                                    <p className="font-medium text-slate-700">{step}</p>
+                                </div>
+                            ))}
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <button className="flex-1 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md">
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button className="px-8 py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-600/30 hover:-translate-y-0.5">
                                 Start Prevention Program
                             </button>
                             <button
                                 onClick={handleStartOver}
-                                className="flex-1 px-6 py-3 border-2 border-border text-foreground font-medium rounded-lg hover:bg-muted transition-all duration-200"
+                                className="px-8 py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-300"
                             >
                                 Retake Assessment
                             </button>
                         </div>
                     </div>
-                </>
+                </div>
             )}
         </div>
     );

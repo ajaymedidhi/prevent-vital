@@ -215,14 +215,14 @@ export default function MedicalPortalInteractive() {
 
     if (!isReady) {
         return (
-            <div className="min-h-screen bg-background pt-24 pb-16 px-4">
+            <div className="min-h-screen bg-slate-50 pt-24 pb-16 px-4">
                 <div className="max-w-7xl mx-auto">
                     {/* Skeleton matching the layout */}
                     <div className="animate-pulse space-y-8">
-                        <div className="h-12 bg-muted rounded-lg w-2/3"></div>
+                        <div className="h-12 bg-slate-200 rounded-lg w-2/3"></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="h-32 bg-muted rounded-xl"></div>
+                                <div key={i} className="h-32 bg-slate-200 rounded-xl"></div>
                             ))}
                         </div>
                     </div>
@@ -233,35 +233,35 @@ export default function MedicalPortalInteractive() {
 
     const TabIcon = ({ icon, className }: { icon: string, className?: string }) => {
         switch (icon) {
-            case 'HomeIcon': return <Home size={20} className={className} />;
-            case 'UserGroupIcon': return <Users size={20} className={className} />;
-            case 'CalendarIcon': return <Calendar size={20} className={className} />;
-            case 'AcademicCapIcon': return <GraduationCap size={20} className={className} />;
+            case 'HomeIcon': return <Home size={18} className={className} />;
+            case 'UserGroupIcon': return <Users size={18} className={className} />;
+            case 'CalendarIcon': return <Calendar size={18} className={className} />;
+            case 'AcademicCapIcon': return <GraduationCap size={18} className={className} />;
             default: return null;
         }
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-slate-50/50">
             {/* Hero Section */}
-            <section className="pt-24 pb-12 px-4 bg-gradient-to-br from-primary/5 via-background to-blue-500/5">
+            <section className="pt-28 pb-12 px-4 bg-white border-b border-slate-100">
                 <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-12 animate-fade-up">
-                        <div className="inline-flex items-center space-x-2 px-4 py-2 bg-primary/10 rounded-full mb-6 border border-primary/20">
-                            <ShieldCheck size={20} className="text-primary" />
-                            <span className="text-sm font-semibold text-primary">Medical Professional Portal</span>
+                    <div className="text-center mb-12 animate-fade-in-up">
+                        <div className="inline-flex items-center space-x-2 px-3 py-1 bg-blue-50 rounded-full mb-6 border border-blue-100/50">
+                            <ShieldCheck size={16} className="text-blue-600" />
+                            <span className="text-xs font-bold text-blue-700 tracking-wider uppercase">Medical Professional Portal</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight tracking-tight">
                             Empower Your Practice with<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-indigo-600">AI-Driven Patient Care</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-600">AI-Driven Patient Care</span>
                         </h1>
-                        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-lg md:text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">
                             Comprehensive patient management tools, clinical decision support, and telemedicine integration designed for modern healthcare professionals.
                         </p>
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-in delay-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                         {stats.map((stat, index) => (
                             <StatsCard key={index} {...stat} />
                         ))}
@@ -269,10 +269,10 @@ export default function MedicalPortalInteractive() {
                 </div>
             </section>
 
-            {/* Navigation Tabs */}
-            <section className="sticky top-16 z-40 bg-background/95 backdrop-blur-sm border-b border-border pl-4">
+            {/* Navigation Tabs - Sticky & Glassmorphic */}
+            <section className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex space-x-2 overflow-x-auto py-4 no-scrollbar">
+                    <div className="flex space-x-1 overflow-x-auto py-3 no-scrollbar">
                         {[
                             { id: 'dashboard', label: 'Dashboard', icon: 'HomeIcon' },
                             { id: 'patients', label: 'Patient Management', icon: 'UserGroupIcon' },
@@ -282,12 +282,12 @@ export default function MedicalPortalInteractive() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold text-sm whitespace-nowrap transition-all duration-300 ${activeTab === tab.id
-                                        ? 'bg-primary text-primary-foreground shadow-md'
-                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg font-semibold text-sm whitespace-nowrap transition-all duration-300 ${activeTab === tab.id
+                                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10 scale-[1.02]'
+                                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
                                     }`}
                             >
-                                <TabIcon icon={tab.icon} />
+                                <TabIcon icon={tab.icon} className={activeTab === tab.id ? "text-blue-400" : ""} />
                                 <span>{tab.label}</span>
                             </button>
                         ))}
@@ -295,81 +295,127 @@ export default function MedicalPortalInteractive() {
                 </div>
             </section>
 
-            {/* Dashboard Tab */}
-            {activeTab === 'dashboard' && (
-                <section className="py-12 px-4 animate-fade-in">
-                    <div className="max-w-7xl mx-auto">
+            {/* Content Area */}
+            <main className="py-12 px-4 max-w-7xl mx-auto min-h-[600px]">
+                {/* Dashboard Tab */}
+                {activeTab === 'dashboard' && (
+                    <div className="animate-fade-in-up">
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Today's Appointments */}
-                            <div className="lg:col-span-2">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-2xl font-bold text-foreground">Today's Schedule</h2>
-                                    <button className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg text-sm font-semibold hover:bg-primary/20 transition-all">
-                                        View Calendar
-                                    </button>
+                            {/* Left Column: Schedule & Key Info */}
+                            <div className="lg:col-span-2 space-y-8">
+                                {/* Today's Schedule Panel */}
+                                <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+                                    <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                        <h2 className="text-lg font-bold text-slate-900 flex items-center">
+                                            <Calendar className="mr-2 text-blue-600" size={20} />
+                                            Today's Schedule
+                                        </h2>
+                                        <button className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+                                            View Calendar
+                                        </button>
+                                    </div>
+                                    <div className="divide-y divide-slate-100">
+                                        {appointments.slice(0, 3).map((appointment) => (
+                                            <div key={appointment.id} className="group hover:bg-slate-50/80 transition-colors p-4 flex items-center justify-between">
+                                                <div className="flex items-center space-x-4">
+                                                    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-xs ring-2 ring-white shadow-sm">
+                                                        {appointment.time}
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="font-bold text-slate-900">{appointment.patientName}</h3>
+                                                        <p className="text-sm text-slate-500">{appointment.type} • <span className={`capitalize ${appointment.status === 'in-progress' ? 'text-emerald-600 font-medium' : ''}`}>{appointment.status}</span></p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleManageAppointment(appointment.id)}
+                                                    className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-slate-50 hover:border-slate-300 shadow-sm"
+                                                >
+                                                    Manage
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                                        <button className="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">View all 18 appointments</button>
+                                    </div>
                                 </div>
-                                <div className="space-y-4">
-                                    {appointments.slice(0, 3).map((appointment) => (
-                                        <AppointmentCard
-                                            key={appointment.id}
-                                            appointment={appointment}
-                                            onManage={handleManageAppointment}
-                                        />
-                                    ))}
+
+                                {/* Platform Capabilities (Moved here for better flow) */}
+                                <div>
+                                    <h2 className="text-xl font-bold text-slate-900 mb-6">Platform Capabilities</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {features.map((feature, index) => (
+                                            <FeatureCard key={index} feature={feature} />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Quick Actions */}
-                            <div>
-                                <h2 className="text-2xl font-bold text-foreground mb-6">Quick Actions</h2>
-                                <div className="space-y-3">
-                                    <button className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all flex items-center justify-between shadow-sm">
-                                        <span>Start Telemedicine</span>
-                                        <Video size={20} />
-                                    </button>
-                                    <button className="w-full px-4 py-3 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-all flex items-center justify-between shadow-sm">
-                                        <span>Add New Patient</span>
-                                        <UserPlus size={20} />
-                                    </button>
-                                    <button className="w-full px-4 py-3 bg-amber-500 text-white rounded-lg text-sm font-semibold hover:bg-amber-600 transition-all flex items-center justify-between shadow-sm">
-                                        <span>Generate Report</span>
-                                        <FileBarChart size={20} />
-                                    </button>
-                                    <button className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all flex items-center justify-between shadow-sm">
-                                        <span>Access EHR</span>
-                                        <FileText size={20} />
+                            {/* Right Column: Quick Actions & Alerts */}
+                            <div className="space-y-8">
+                                <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-6">
+                                    <h2 className="text-lg font-bold text-slate-900 mb-6">Quick Actions</h2>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button className="col-span-1 p-4 bg-blue-50 border border-blue-100 rounded-xl text-left hover:bg-blue-100/80 transition-all group">
+                                            <Video className="text-blue-600 mb-3 group-hover:scale-110 transition-transform" size={24} />
+                                            <span className="block text-sm font-bold text-slate-900">Start Telemedicine</span>
+                                        </button>
+                                        <button className="col-span-1 p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-left hover:bg-emerald-100/80 transition-all group">
+                                            <UserPlus className="text-emerald-600 mb-3 group-hover:scale-110 transition-transform" size={24} />
+                                            <span className="block text-sm font-bold text-slate-900">Add Patient</span>
+                                        </button>
+                                        <button className="col-span-1 p-4 bg-amber-50 border border-amber-100 rounded-xl text-left hover:bg-amber-100/80 transition-all group">
+                                            <FileBarChart className="text-amber-600 mb-3 group-hover:scale-110 transition-transform" size={24} />
+                                            <span className="block text-sm font-bold text-slate-900">Reports</span>
+                                        </button>
+                                        <button className="col-span-1 p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-left hover:bg-indigo-100/80 transition-all group">
+                                            <FileText className="text-indigo-600 mb-3 group-hover:scale-110 transition-transform" size={24} />
+                                            <span className="block text-sm font-bold text-slate-900">Access EHR</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Recent Alerts / Updates (Mock) */}
+                                <div className="bg-slate-900 rounded-2xl text-white p-6 shadow-xl shadow-slate-900/10">
+                                    <h2 className="text-lg font-bold mb-4 flex items-center">
+                                        <span className="relative flex h-3 w-3 mr-3">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                        </span>
+                                        Critical Alerts
+                                    </h2>
+                                    <div className="space-y-4">
+                                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
+                                            <p className="text-sm font-medium text-red-200 mb-1">High Risk Detected</p>
+                                            <p className="text-xs text-slate-300">Patient <span className="text-white font-bold">Amit Patel</span> approaching critical cardiac threshold.</p>
+                                        </div>
+                                        <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
+                                            <p className="text-sm font-medium text-amber-200 mb-1">Missed Check-in</p>
+                                            <p className="text-xs text-slate-300">Patient <span className="text-white font-bold">Sneha Reddy</span> missed daily vitals log.</p>
+                                        </div>
+                                    </div>
+                                    <button className="w-full mt-4 py-2 text-xs font-bold text-slate-400 hover:text-white transition-colors border-t border-white/10 uppercase tracking-wider">
+                                        View All Alerts
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Platform Features */}
-                        <div className="mt-16">
-                            <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Platform Capabilities</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {features.map((feature, index) => (
-                                    <FeatureCard key={index} feature={feature} />
-                                ))}
                             </div>
                         </div>
                     </div>
-                </section>
-            )}
+                )}
 
-            {/* Patients Tab */}
-            {activeTab === 'patients' && (
-                <section className="py-12 px-4 animate-fade-in">
-                    <div className="max-w-7xl mx-auto">
+                {/* Patients Tab */}
+                {activeTab === 'patients' && (
+                    <section className="animate-fade-in-up">
                         <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-                            <h2 className="text-3xl font-bold text-foreground">Patient Management</h2>
+                            <h2 className="text-2xl font-bold text-slate-900">Patient Management</h2>
                             <div className="flex items-center space-x-3">
                                 <input
                                     type="text"
                                     placeholder="Search patients..."
-                                    className="px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background w-full md:w-auto"
+                                    className="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-full md:w-64"
                                 />
-                                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all whitespace-nowrap">
-                                    Add Patient
+                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
+                                    Add New Patient
                                 </button>
                             </div>
                         </div>
@@ -382,17 +428,15 @@ export default function MedicalPortalInteractive() {
                                 />
                             ))}
                         </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                )}
 
-            {/* Appointments Tab */}
-            {activeTab === 'appointments' && (
-                <section className="py-12 px-4 animate-fade-in">
-                    <div className="max-w-7xl mx-auto">
+                {/* Appointments Tab */}
+                {activeTab === 'appointments' && (
+                    <section className="animate-fade-in-up">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-3xl font-bold text-foreground">Appointment Management</h2>
-                            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all">
+                            <h2 className="text-2xl font-bold text-slate-900">Appointment Management</h2>
+                            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all shadow-md">
                                 Schedule New
                             </button>
                         </div>
@@ -405,19 +449,20 @@ export default function MedicalPortalInteractive() {
                                 />
                             ))}
                         </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                )}
 
-            {/* Research Tab */}
-            {activeTab === 'research' && (
-                <section className="py-12 px-4 animate-fade-in">
-                    <div className="max-w-7xl mx-auto">
-                        <h2 className="text-3xl font-bold text-foreground mb-8">Research & Continuing Education</h2>
+                {/* Research Tab */}
+                {activeTab === 'research' && (
+                    <section className="animate-fade-in-up">
+                        <h2 className="text-2xl font-bold text-slate-900 mb-8 border-b border-slate-200 pb-4">Research & Continuing Education</h2>
 
                         {/* Research Publications */}
                         <div className="mb-16">
-                            <h3 className="text-2xl font-bold text-foreground mb-6">Latest Publications</h3>
+                            <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                                <span className="w-1 h-6 bg-blue-500 rounded-full mr-3"></span>
+                                Latest Publications
+                            </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {research.map((item) => (
                                     <ResearchCard key={item.id} research={item} />
@@ -427,31 +472,34 @@ export default function MedicalPortalInteractive() {
 
                         {/* Professional Testimonials */}
                         <div>
-                            <h3 className="text-2xl font-bold text-foreground mb-6">What Healthcare Professionals Say</h3>
+                            <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
+                                <span className="w-1 h-6 bg-emerald-500 rounded-full mr-3"></span>
+                                Peer Reviews
+                            </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {testimonials.map((testimonial) => (
                                     <TestimonialCard key={testimonial.id} testimonial={testimonial} />
                                 ))}
                             </div>
                         </div>
-                    </div>
-                </section>
-            )}
+                    </section>
+                )}
+            </main>
 
             {/* CTA Section */}
-            <section className="py-16 px-4 bg-gradient-to-br from-primary/10 via-background to-blue-500/10">
+            <section className="py-16 px-4 bg-slate-900 text-white">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
                         Ready to Transform Your Practice?
                     </h2>
-                    <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                    <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
                         Join thousands of healthcare professionals using PreventVital to deliver superior patient outcomes through AI-powered preventive care.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button className="px-8 py-4 bg-primary text-primary-foreground rounded-lg text-base font-semibold hover:bg-primary/90 transition-all shadow-lg hover:scale-105">
+                        <button className="px-8 py-4 bg-blue-600 text-white rounded-lg text-base font-bold hover:bg-blue-500 transition-all shadow-xl shadow-blue-900/50 hover:scale-105">
                             Request Demo
                         </button>
-                        <button className="px-8 py-4 bg-card border-2 border-primary text-primary rounded-lg text-base font-semibold hover:bg-primary/5 transition-all">
+                        <button className="px-8 py-4 bg-transparent border-2 border-slate-700 text-white rounded-lg text-base font-bold hover:bg-slate-800 transition-all">
                             Schedule Consultation
                         </button>
                     </div>

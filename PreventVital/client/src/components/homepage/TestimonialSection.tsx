@@ -66,103 +66,100 @@ const TestimonialSection = () => {
     };
 
     return (
-        <section className="py-16 lg:py-24 bg-muted/30">
+        <section className="py-24 bg-background relative">
             <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-100 border border-emerald-200 rounded-full mb-4 dark:bg-emerald-900/30 dark:border-emerald-800">
-                        <Star size={16} className="text-emerald-600 dark:text-emerald-400" />
-                        <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">Patient Success Stories</span>
-                    </div>
-                    <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                        Real Results, Real People
-                    </h2>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Discover how PreventVital has transformed lives through preventive healthcare
-                    </p>
-                </div>
-
-                <div className="max-w-4xl mx-auto">
-                    <div className="relative bg-card rounded-2xl shadow-xl border border-border overflow-hidden">
-                        <div className="grid md:grid-cols-5 gap-6 p-8 lg:p-12">
-                            <div className="md:col-span-2 flex flex-col items-center text-center">
-                                <div className="relative w-32 h-32 mb-4">
-                                    <img
-                                        src={testimonials[currentIndex].image}
-                                        alt={testimonials[currentIndex].alt}
-                                        className="w-full h-full rounded-full object-cover border-4 border-primary"
-                                    />
-                                    <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center border-4 border-card">
-                                        <Check size={20} className="text-white" />
-                                    </div>
-                                </div>
-                                <h3 className="text-xl font-bold text-foreground mb-1">
-                                    {testimonials[currentIndex].name}
-                                </h3>
-                                <p className="text-sm text-muted-foreground mb-2">
-                                    Age {testimonials[currentIndex].age}
-                                </p>
-                                <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full">
-                                    {testimonials[currentIndex].condition}
-                                </span>
-
-                                <div className="flex items-center space-x-1 mt-4">
-                                    {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
-                                        <Star key={i} size={16} className="text-amber-500 fill-amber-500" />
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="md:col-span-3">
-                                <MessageSquare size={32} className="text-primary/20 mb-4" />
-                                <blockquote className="text-foreground text-lg leading-relaxed mb-6">
-                                    "{testimonials[currentIndex].quote}"
-                                </blockquote>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-emerald-100 dark:bg-emerald-900/30 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
-                                        <div className="text-xs text-muted-foreground mb-1">Health Improvement</div>
-                                        <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                                            {testimonials[currentIndex].improvement}
-                                        </div>
-                                    </div>
-                                    <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                                        <div className="text-xs text-muted-foreground mb-1">Program Duration</div>
-                                        <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                            {testimonials[currentIndex].duration}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div className="flex flex-col lg:flex-row items-center gap-16">
+                    {/* Left Panel: Header & Controls */}
+                    <div className="w-full lg:w-4/12 space-y-6">
+                        <div className="inline-flex items-center space-x-2 px-3 py-1 bg-accent/10 border border-accent/20 rounded-full">
+                            <Star size={14} className="text-accent fill-accent" />
+                            <span className="text-xs font-bold text-accent uppercase tracking-widest">Success Stories</span>
                         </div>
 
-                        <div className="flex items-center justify-between px-8 py-4 bg-muted/50 border-t border-border">
+                        <h2 className="text-4xl lg:text-5xl font-bold text-foreground leading-[1.1]">
+                            Life-Changing <br />
+                            <span className="text-accent">Transformations</span>
+                        </h2>
+
+                        <p className="text-lg text-muted-foreground leading-relaxed">
+                            Join thousands who have rewritten their health stories with PreventVital's AI-driven guidance.
+                        </p>
+
+                        <div className="flex items-center space-x-3 pt-4">
                             <button
                                 onClick={handlePrevious}
-                                className="p-2 hover:bg-background rounded-lg transition-colors"
-                                aria-label="Previous testimonial"
+                                className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
                             >
-                                <ChevronLeft size={24} className="text-muted-foreground" />
+                                <ChevronLeft size={20} />
                             </button>
-
-                            <div className="flex items-center space-x-2">
-                                {testimonials.map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setCurrentIndex(index)}
-                                        className={`h-2 rounded-full transition-all duration-300 ${currentIndex === index ? 'w-8 bg-primary' : 'w-2 bg-muted'
-                                            }`}
-                                        aria-label={`Go to testimonial ${index + 1}`}
-                                    />
-                                ))}
-                            </div>
-
                             <button
                                 onClick={handleNext}
-                                className="p-2 hover:bg-background rounded-lg transition-colors"
-                                aria-label="Next testimonial"
+                                className="w-12 h-12 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300"
                             >
-                                <ChevronRight size={24} className="text-muted-foreground" />
+                                <ChevronRight size={20} />
                             </button>
+                        </div>
+                    </div>
+
+                    {/* Right Panel: Testimonial Card */}
+                    <div className="w-full lg:w-8/12">
+                        <div className="relative bg-secondary/30 rounded-[2rem] p-8 lg:p-12 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 border border-border/50">
+                            {/* Decorative Quote Icon */}
+                            <div className="absolute top-10 right-10 opacity-10">
+                                <MessageSquare size={120} className="text-primary" />
+                            </div>
+
+                            <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start">
+                                <div className="flex-shrink-0">
+                                    <div className="relative w-24 h-24 lg:w-32 lg:h-32">
+                                        <img
+                                            src={testimonials[currentIndex].image}
+                                            alt={testimonials[currentIndex].alt}
+                                            className="w-full h-full rounded-2xl object-cover shadow-lg"
+                                        />
+                                        <div className="absolute -bottom-3 -right-3 w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-md border-2 border-background">
+                                            <Check size={18} className="text-white" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 space-y-6">
+                                    <div className="flex items-center space-x-1">
+                                        {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                                            <Star key={i} size={18} className="text-amber-500 fill-amber-500" />
+                                        ))}
+                                    </div>
+
+                                    <blockquote className="text-2xl font-medium text-foreground leading-normal font-sans tracking-tight">
+                                        "{testimonials[currentIndex].quote}"
+                                    </blockquote>
+
+                                    <div>
+                                        <h4 className="text-lg font-bold text-foreground">
+                                            {testimonials[currentIndex].name}
+                                        </h4>
+                                        <p className="text-sm text-muted-foreground font-medium">
+                                            {testimonials[currentIndex].condition} • Age {testimonials[currentIndex].age}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex gap-4 border-t border-border pt-6">
+                                        <div>
+                                            <div className="text-xs font-bold text-muted-foreground/70 uppercase tracking-wider mb-1">Result</div>
+                                            <div className="text-lg font-bold text-accent">
+                                                {testimonials[currentIndex].improvement}
+                                            </div>
+                                        </div>
+                                        <div className="w-px bg-border"></div>
+                                        <div>
+                                            <div className="text-xs font-bold text-muted-foreground/70 uppercase tracking-wider mb-1">Timeframe</div>
+                                            <div className="text-lg font-bold text-foreground">
+                                                {testimonials[currentIndex].duration}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

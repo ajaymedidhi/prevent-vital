@@ -1,29 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    /* GruentzigAI Design System - Medical-grade, calm, trustworthy */
+
+    /* Primary: Deep Medical Blue - Trust, Authority */
+    /* #1D3557 converted to HSL: 215 50% 23% */
+    --primary: 215 50% 23%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+
+    /* Secondary: Soft Slate - Balance, Calm */
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 50% 23%;
+
+    /* Accent: Medical Teal - Health, Vitality, Prevention */
+    /* #3A8D85 converted to HSL: 175 45% 42% */
+    --accent: 175 45% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Backgrounds */
+    --background: 0 0% 100%;
+    --foreground: 215 30% 15%;
+    /* Darker text for readability (was slate-600) */
+
+    /* Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 215 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 30% 15%;
+
+    /* Muted */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 20% 45%;
+
+    /* Destructive */
+    --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+
+    /* Borders & Inputs */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 215 50% 23%;
+    /* Focus ring matches primary */
+
+    --radius: 0.75rem;
+    /* Slightly more rounded for friendly feel */
+
+    /* Sidebar (if needed) */
+    --sidebar-background: 210 20% 98%;
+    --sidebar-foreground: 215 50% 23%;
+    --sidebar-primary: 215 50% 23%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 210 20% 94%;
+    --sidebar-accent-foreground: 215 50% 23%;
+    --sidebar-border: 210 20% 90%;
+    --sidebar-ring: 175 50% 40%;
+
+    /* Custom Gradients & Shadows */
+    --hero-gradient: linear-gradient(180deg, hsl(210 30% 98%) 0%, hsl(0 0% 100%) 100%);
+    --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    --card-shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --section-alt: 210 30% 98%;
+    /* Very light blue-grey for alternating sections */
+  }
+
+  .dark {
+    /* Dark mode adjustments if needed - keeping it minimal for now as medical apps often lean light */
+    --primary: 215 50% 35%;
+    --primary-foreground: 210 40% 98%;
+
+    --background: 215 30% 10%;
+    --foreground: 210 20% 95%;
+
+    --card: 215 30% 12%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 215 30% 12%;
+    --popover-foreground: 210 20% 95%;
+
+    --secondary: 215 30% 15%;
+    --secondary-foreground: 210 20% 90%;
+
+    --muted: 215 30% 18%;
+    --muted-foreground: 210 15% 60%;
+
+    --accent: 175 45% 35%;
+    --accent-foreground: 210 20% 95%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 215 30% 18%;
+    --input: 215 30% 18%;
+    --ring: 175 50% 45%;
+
+    --section-alt: 215 30% 11%;
   }
 }
 
@@ -32,8 +108,151 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
-    font-family: "Plus Jakarta Sans", sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl leading-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl leading-snug;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+}
+
+@layer utilities {
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .container-narrow {
+    @apply max-w-5xl mx-auto px-6;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-6;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm dark:bg-black/40 dark:border-white/10;
+  }
+
+  /* Animations */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slow-zoom {
+    animation: slowZoom 20s linear infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  .animate-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slowZoom {
+    from {
+      transform: scale(1);
+    }
+
+    to {
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
   }
 }

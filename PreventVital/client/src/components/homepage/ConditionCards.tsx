@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Beaker, Heart, Zap, Cloud, Sparkles, Scale, ArrowRight } from 'lucide-react';
 
@@ -21,7 +20,7 @@ const ConditionCards = () => {
             description: 'AI-powered glucose monitoring and lifestyle intervention programs to prevent Type 2 diabetes.',
             icon: 'BeakerIcon',
             image: "https://images.unsplash.com/photo-1685660375327-47bcca398780",
-            alt: 'Blood glucose meter with test strips on wooden table showing diabetes monitoring equipment',
+            alt: 'Blood glucose meter',
             riskFactors: ['Family History', 'Obesity', 'Sedentary Lifestyle'],
             preventionRate: '78%'
         },
@@ -31,7 +30,7 @@ const ConditionCards = () => {
             description: 'Continuous blood pressure monitoring with personalized stress reduction and dietary guidance.',
             icon: 'HeartIcon',
             image: "https://images.unsplash.com/photo-1623658045230-605cb00c80d6",
-            alt: 'Digital blood pressure monitor displaying readings with stethoscope on medical examination table',
+            alt: 'Digital blood pressure monitor',
             riskFactors: ['High Sodium', 'Stress', 'Age'],
             preventionRate: '82%'
         },
@@ -41,7 +40,7 @@ const ConditionCards = () => {
             description: 'Advanced heart health monitoring with ECG integration and cardiovascular risk assessment.',
             icon: 'BoltIcon',
             image: "https://img.rocket.new/generatedImages/rocket_gen_img_19c8b52ae-1765801567685.png",
-            alt: 'Cardiologist examining ECG heart rhythm chart with medical equipment in modern clinic',
+            alt: 'Cardiologist examining ECG',
             riskFactors: ['Cholesterol', 'Smoking', 'Inactivity'],
             preventionRate: '85%'
         },
@@ -51,7 +50,7 @@ const ConditionCards = () => {
             description: 'Breathwork therapy combined with air quality monitoring for optimal lung health.',
             icon: 'CloudIcon',
             image: "https://img.rocket.new/generatedImages/rocket_gen_img_11b83cbcc-1764755888108.png",
-            alt: 'Person practicing deep breathing exercises outdoors in fresh mountain air with clear blue sky',
+            alt: 'Person practicing deep breathing',
             riskFactors: ['Pollution', 'Allergies', 'Smoking'],
             preventionRate: '76%'
         },
@@ -61,7 +60,7 @@ const ConditionCards = () => {
             description: 'Meditation, mindfulness, and AI-driven mood tracking for emotional wellness.',
             icon: 'SparklesIcon',
             image: "https://img.rocket.new/generatedImages/rocket_gen_img_11552d387-1764832853014.png",
-            alt: 'Peaceful woman meditating in lotus position with eyes closed in tranquil indoor setting',
+            alt: 'Peaceful woman meditating',
             riskFactors: ['Stress', 'Sleep Issues', 'Isolation'],
             preventionRate: '88%'
         },
@@ -71,7 +70,7 @@ const ConditionCards = () => {
             description: 'Holistic approach combining nutrition, exercise, and behavioral therapy for sustainable results.',
             icon: 'ScaleIcon',
             image: "https://img.rocket.new/generatedImages/rocket_gen_img_1bb8da715-1764844202208.png",
-            alt: 'Athletic person jogging on outdoor trail wearing fitness tracker with healthy lifestyle concept',
+            alt: 'Healthy lifestyle concept',
             riskFactors: ['Poor Diet', 'Inactivity', 'Metabolism'],
             preventionRate: '80%'
         }
@@ -87,57 +86,65 @@ const ConditionCards = () => {
     };
 
     return (
-        <section className="py-16 lg:py-24 bg-background">
+        <section className="py-24 bg-section-alt/30">
             <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                        Condition-Specific Prevention Programs
+                <div className="text-center mb-16">
+                    <span className="text-primary font-bold tracking-widest uppercase text-xs mb-4 block">Targeted Programs</span>
+                    <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4 tracking-tight pb-1">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600">
+                            Condition-Specific Prevention
+                        </span>
                     </h2>
-                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Targeted interventions powered by AI analytics and traditional wellness therapies
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                        Clinically validated interventions powered by AI analytics to address chronic risks effectively.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {conditions.map((condition) => {
                         const IconComponent = IconMap[condition.icon];
                         return (
                             <div
                                 key={condition.id}
-                                className="group bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                                className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1"
                             >
-                                <div className="relative h-48 overflow-hidden">
+                                <div className="relative h-52 overflow-hidden">
+                                    {/* Image Overlay */}
+                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
+
                                     <img
                                         src={condition.image}
                                         alt={condition.alt}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
-                                    <div className="absolute bottom-4 left-4 flex items-center space-x-2">
-                                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                                            <IconComponent size={20} className="text-primary-foreground" />
-                                        </div>
-                                        <span className="text-sm font-semibold text-white bg-emerald-600 px-3 py-1 rounded-full">
-                                            {condition.preventionRate} Success Rate
+
+                                    <div className="absolute top-4 right-4 z-20">
+                                        <span className="inline-flex items-center px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-xs font-bold rounded-full shadow-sm">
+                                            {condition.preventionRate} Success
                                         </span>
+                                    </div>
+
+                                    <div className="absolute bottom-4 left-4 z-20">
+                                        <div className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-md">
+                                            <IconComponent size={20} className="text-primary" />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="p-6">
-                                    <h3 className="text-xl font-bold text-foreground mb-2">
+                                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                                         {condition.title}
                                     </h3>
-                                    <p className="text-sm text-muted-foreground mb-4">
+                                    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                                         {condition.description}
                                     </p>
 
-                                    <div className="mb-4">
-                                        <div className="text-xs font-semibold text-muted-foreground mb-2">Key Risk Factors:</div>
+                                    <div className="mb-6">
                                         <div className="flex flex-wrap gap-2">
                                             {condition.riskFactors.map((factor, index) => (
                                                 <span
                                                     key={index}
-                                                    className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-full"
+                                                    className="text-[10px] uppercase font-bold tracking-wider px-2 py-1 bg-secondary text-secondary-foreground rounded border border-border"
                                                 >
                                                     {factor}
                                                 </span>
@@ -147,10 +154,10 @@ const ConditionCards = () => {
 
                                     <Link
                                         to="/disease-prevention-programs"
-                                        className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                                        className="inline-flex items-center text-sm font-bold text-primary hover:text-primary/80 transition-colors group/link"
                                     >
-                                        Learn More
-                                        <ArrowRight size={16} className="ml-1" />
+                                        View Program Details
+                                        <ArrowRight size={16} className="ml-2 transform group-hover/link:translate-x-1 transition-transform" />
                                     </Link>
                                 </div>
                             </div>
@@ -158,12 +165,12 @@ const ConditionCards = () => {
                     })}
                 </div>
 
-                <div className="text-center mt-12">
+                <div className="text-center mt-16">
                     <Link
                         to="/disease-prevention-programs"
-                        className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-md"
+                        className="inline-flex items-center px-8 py-4 bg-background border border-border text-foreground font-semibold rounded-lg hover:border-primary hover:text-primary transition-all duration-300 hover:shadow-md"
                     >
-                        View All Programs
+                        Explore Complete Catalog
                         <ArrowRight size={20} className="ml-2" />
                     </Link>
                 </div>
