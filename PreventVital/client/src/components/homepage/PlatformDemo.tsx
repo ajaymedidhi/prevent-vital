@@ -64,7 +64,7 @@ const PlatformDemo = () => {
 
     return (
         <section className="py-20 lg:py-28 bg-background overflow-hidden">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-6 md:px-16">
                 <div className="flex flex-col lg:flex-row gap-16 items-center">
                     {/* Content Side */}
                     <div className="w-full lg:w-5/12 space-y-8 animate-fade-in-left">

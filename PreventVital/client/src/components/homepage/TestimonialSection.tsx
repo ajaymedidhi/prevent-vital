@@ -67,7 +67,7 @@ const TestimonialSection = () => {
 
     return (
         <section className="py-24 bg-background relative">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-6 md:px-16">
                 <div className="flex flex-col lg:flex-row items-center gap-16">
                     {/* Left Panel: Header & Controls */}
                     <div className="w-full lg:w-4/12 space-y-6">

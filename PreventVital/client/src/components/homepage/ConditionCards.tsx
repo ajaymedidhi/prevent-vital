@@ -87,7 +87,7 @@ const ConditionCards = () => {
 
     return (
         <section className="py-24 bg-section-alt/30">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-6 md:px-16">
                 <div className="text-center mb-16">
                     <span className="text-primary font-bold tracking-widest uppercase text-xs mb-4 block">Targeted Programs</span>
                     <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4 tracking-tight pb-1">
