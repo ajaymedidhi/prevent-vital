@@ -110,12 +110,17 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1,
@@ -125,6 +130,7 @@
   h5,
   h6 {
     @apply font-semibold tracking-tight text-foreground;
+    text-wrap: balance;
   }
 
   h1 {
@@ -141,6 +147,7 @@
 
   p {
     @apply leading-relaxed;
+    overflow-wrap: break-word;
   }
 }
 
