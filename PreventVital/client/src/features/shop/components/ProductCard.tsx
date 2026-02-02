@@ -8,7 +8,7 @@ import { Product } from '@/store/shopSlice';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '@/store/shopSlice';
 import { toast } from "sonner";
-import { ShoppingCart, Eye } from 'lucide-react';
+import { ShoppingCart, Eye, Heart, Star } from 'lucide-react';
 
 interface ProductCardProps {
     product: Product;
@@ -19,40 +19,84 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, userRegion }) => {
     const dispatch = useDispatch();
     const mainImage = product.images?.[0] || product.image || '/placeholder.png';
 
+    // Determine badge type based on product tags or logic (Mock logic for now)
+    const getBadge = () => {
+        if (product.stock <= 5 && product.stock > 0) return { label: 'Limited', color: 'bg-orange-500' };
+        if (product.category === 'wearables') return { label: 'Best Seller', color: 'bg-blue-500' }; // Mock
+        if (product.category === 'test_kits') return { label: 'Premium', color: 'bg-purple-500' }; // Mock
+        return null;
+    };
+
+    const badge = getBadge();
+
     return (
-        <Card className="group relative border-none shadow-sm hover:shadow-xl transition-all duration-300 bg-white rounded-2xl overflow-hidden flex flex-col h-full">
-            {/* Image Container with Quick Actions */}
-            <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
-                <div className="absolute top-3 left-3 z-10">
-                    <RegionBadge allowedRegions={product.allowedRegions} userRegion={userRegion} />
+        <Card className="group relative border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-xl overflow-hidden flex flex-col h-full">
+            {/* Image Container */}
+            <div className="relative aspect-square overflow-hidden bg-gray-50">
+                {/* Badges */}
+                <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+                    {badge && (
+                        <Badge className={`${badge.color} hover:${badge.color} text-white border-none px-2.5 py-0.5 text-xs font-medium rounded-full shadow-sm`}>
+                            {badge.label}
+                        </Badge>
+                    )}
+                    {product.mrp && product.mrp > product.price && (
+                        <Badge className="bg-red-500 hover:bg-red-600 text-white border-none px-2.5 py-0.5 text-xs font-medium rounded-full shadow-sm">
+                            {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
+                        </Badge>
+                    )}
                 </div>
-                {product.mrp && product.mrp > product.price && (
-                    <Badge className="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white border-none px-2.5 py-1 z-10 shadow-sm">
-                        {Math.round(((product.mrp - product.price) / product.mrp) * 100)}% OFF
-                    </Badge>
+
+                {/* Wishlist Button (Placeholder) */}
+                <button className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-colors shadow-sm">
+                    <Heart size={16} />
+                </button>
+
+                <Link to={`/products/${product.slug || product._id}`} className="block w-full h-full">
+                    <img
+                        src={mainImage}
+                        alt={product.name}
+                        className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105 mix-blend-multiply"
+                    />
+                </Link>
+
+                {/* Out of Stock Overlay */}
+                {product.stock <= 0 && (
+                    <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-20">
+                        <Badge variant="outline" className="text-gray-500 border-gray-300 bg-white/80 px-3 py-1 text-xs uppercase tracking-wider font-bold">
+                            Out of Stock
+                        </Badge>
+                    </div>
                 )}
+            </div>
 
-                <img
-                    src={mainImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                />
+            {/* Content Info */}
+            <CardContent className="p-4 flex-1 flex flex-col pt-4">
+                <div className="mb-1">
+                    <div className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+                        {product.category.replace('_', ' ')}
+                    </div>
+                </div>
 
-                {/* Overlay Quick Actions */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
+                <Link to={`/products/${product.slug || product._id}`} className="block mb-3">
+                    <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 hover:text-indigo-600 transition-colors">
+                        {product.name}
+                    </h3>
+                </Link>
+
+                <div className="flex items-center gap-1 mb-4">
+                    <Star size={12} className="text-yellow-400 fill-yellow-400" />
+                    <span className="text-xs font-medium text-gray-600">4.8</span>
+                </div>
+
+                <div className="mt-auto flex items-center justify-between">
+                    <div className="flex flex-col">
+                        <span className="text-lg font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
+                    </div>
+
                     <Button
-                        asChild
-                        variant="secondary"
-                        size="icon"
-                        className="rounded-full h-10 w-10 bg-white hover:bg-white text-gray-900 shadow-lg hover:scale-110 transition-transform"
-                    >
-                        <Link to={`/products/${product.slug || product._id}`} title="View Details">
-                            <Eye size={18} />
-                        </Link>
-                    </Button>
-                    <Button
-                        size="icon"
-                        className="rounded-full h-10 w-10 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:scale-110 transition-transform"
+                        size="sm"
+                        className="h-8 px-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-md rounded-md text-xs font-medium transition-all hover:shadow-lg"
                         disabled={product.stock <= 0}
                         onClick={(e) => {
                             e.preventDefault();
@@ -62,45 +106,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, userRegion }) => {
                                 duration: 2000,
                             });
                         }}
-                        title="Add to Cart"
                     >
-                        <ShoppingCart size={18} />
+                        <ShoppingCart size={14} className="mr-1.5" /> Add
                     </Button>
-                </div>
-
-                {product.stock <= 0 && (
-                    <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center z-20">
-                        <Badge variant="outline" className="text-gray-500 border-gray-400 bg-white/50 px-4 py-1.5 text-sm uppercase tracking-wider font-semibold">
-                            Out of Stock
-                        </Badge>
-                    </div>
-                )}
-            </div>
-
-            {/* Content Info */}
-            <CardContent className="p-5 flex-1 flex flex-col justify-between">
-                <div>
-                    <div className="text-xs font-semibold tracking-wider text-indigo-600 uppercase mb-1">
-                        {product.category.replace('_', ' ')}
-                    </div>
-                    <Link to={`/products/${product.slug || product._id}`} className="block">
-                        <h3 className="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-indigo-700 transition-colors line-clamp-2 min-h-[3.5rem]">
-                            {product.name}
-                        </h3>
-                    </Link>
-                </div>
-
-                <div className="mt-4 flex items-baseline justify-between">
-                    <div className="flex flex-col">
-                        <span className="text-2xl font-bold text-gray-900 tracking-tight">₹{product.price.toLocaleString()}</span>
-                        {product.mrp && product.mrp > product.price && (
-                            <span className="text-sm text-gray-400 line-through font-medium">MRP: ₹{product.mrp.toLocaleString()}</span>
-                        )}
-                    </div>
-                    {/* Add rating mock or real if available later */}
-                    <div className="text-xs text-yellow-500 font-medium flex items-center gap-1">
-                        ★ 4.8
-                    </div>
                 </div>
             </CardContent>
         </Card>

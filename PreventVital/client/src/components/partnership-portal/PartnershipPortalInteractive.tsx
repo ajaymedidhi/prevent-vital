@@ -2,12 +2,7 @@
 import { Helmet } from 'react-helmet-async';
 import PartnershipHero from '@/components/partnership-portal/PartnershipHero';
 import PartnershipTypes from '@/components/partnership-portal/PartnershipTypes';
-import PartnerSuccessMetrics from '@/components/partnership-portal/PartnerSuccessMetrics';
-import IntegrationShowcase from '@/components/partnership-portal/IntegrationShowcase';
-import APIDocumentation from '@/components/partnership-portal/APIDocumentation';
-import ComplianceCertifications from '@/components/partnership-portal/ComplianceCertifications';
-import OnboardingWorkflow from '@/components/partnership-portal/OnboardingWorkflow';
-import PricingTiers from '@/components/partnership-portal/PricingTiers';
+import WhyPartner from '@/components/partnership-portal/WhyPartner';
 import PartnerCTA from '@/components/partnership-portal/PartnerCTA';
 
 const PartnershipPortalInteractive = () => {
@@ -21,12 +16,7 @@ const PartnershipPortalInteractive = () => {
             <div className="min-h-screen bg-background text-foreground">
                 <PartnershipHero />
                 <PartnershipTypes />
-                <PartnerSuccessMetrics />
-                <IntegrationShowcase />
-                <OnboardingWorkflow />
-                <APIDocumentation />
-                <ComplianceCertifications />
-                <PricingTiers />
+                <WhyPartner />
                 <PartnerCTA />
             </div>
         </>

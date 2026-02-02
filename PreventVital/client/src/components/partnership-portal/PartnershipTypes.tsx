@@ -3,7 +3,7 @@ import {
     Building2,
     Smartphone,
     Users,
-    Cpu,
+    Code,
     CheckCircle,
     ArrowRight
 } from 'lucide-react';
@@ -21,7 +21,7 @@ const partnershipTypes: PartnershipType[] = [
     {
         id: 'hospital',
         title: 'Hospital Partnerships',
-        description: 'Integrate PreventVital into your healthcare facility to enhance patient outcomes through predictive analytics and continuous monitoring.',
+        description: 'Integrate PreventVital into your healthcare facility to enhance patient outcomes through predictive analytics.',
         icon: Building2,
         benefits: [
             'Patient referral tracking system',
@@ -35,7 +35,7 @@ const partnershipTypes: PartnershipType[] = [
     {
         id: 'device',
         title: 'Device Integration',
-        description: 'Connect your wearable devices and health monitoring equipment to our AI-powered platform for comprehensive health insights.',
+        description: 'Connect your wearable devices and health monitoring equipment to our AI-powered platform.',
         icon: Smartphone,
         benefits: [
             'Real-time data synchronization',
@@ -49,7 +49,7 @@ const partnershipTypes: PartnershipType[] = [
     {
         id: 'provider',
         title: 'Healthcare Provider Network',
-        description: 'Join our network of medical professionals delivering preventive care through technology-enhanced patient management.',
+        description: 'Join our network of medical professionals delivering preventive care through technology.',
         icon: Users,
         benefits: [
             'Patient management tools',
@@ -63,8 +63,8 @@ const partnershipTypes: PartnershipType[] = [
     {
         id: 'technology',
         title: 'Technology Alliances',
-        description: 'Collaborate on innovative solutions combining your technology expertise with our healthcare platform capabilities.',
-        icon: Cpu,
+        description: 'Build innovative health solutions together through our comprehensive API platform.',
+        icon: Code,
         benefits: [
             'API-first integration',
             'White-label opportunities',
@@ -82,10 +82,10 @@ interface PartnershipTypesProps {
 
 const PartnershipTypes = ({ className = '' }: PartnershipTypesProps) => {
     return (
-        <section className={`py-16 lg:py-24 bg-background ${className}`}>
+        <section className={`py-20 lg:py-24 bg-white ${className}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                         Partnership Opportunities
                     </h2>
                     <p className="text-lg text-muted-foreground">
@@ -97,31 +97,35 @@ const PartnershipTypes = ({ className = '' }: PartnershipTypesProps) => {
                     {partnershipTypes.map((type) => (
                         <div
                             key={type.id}
-                            className="bg-card rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-border"
+                            className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 flex flex-col h-full"
                         >
                             <div className="flex items-start space-x-4 mb-6">
-                                <div className={`w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0`}>
-                                    <type.icon size={28} className="text-primary" />
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${type.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                                    type.color === 'amber' ? 'bg-purple-100 text-purple-600' :
+                                        type.color === 'emerald' ? 'bg-indigo-100 text-indigo-600' :
+                                            'bg-cyan-100 text-cyan-600'
+                                    }`}>
+                                    <type.icon size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-bold text-foreground mb-2">{type.title}</h3>
-                                    <p className="text-muted-foreground">{type.description}</p>
+                                    <h3 className="text-xl font-bold text-foreground mb-2">{type.title}</h3>
+                                    <p className="text-gray-500 leading-relaxed text-sm">{type.description}</p>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-semibold text-foreground uppercase tracking-wide">Key Benefits</h4>
+                            <div className="space-y-3 mb-8 flex-grow">
+                                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-4">Key Benefits</h4>
                                 {type.benefits.map((benefit, index) => (
                                     <div key={index} className="flex items-start space-x-3">
-                                        <CheckCircle size={20} className="text-primary flex-shrink-0 mt-0.5" />
-                                        <span className="text-muted-foreground">{benefit}</span>
+                                        <CheckCircle size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                                        <span className="text-gray-600 text-sm">{benefit}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <button className="w-full mt-6 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center space-x-2">
+                            <button className="w-full mt-auto px-6 py-3 bg-gray-50 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 border border-gray-100 group">
                                 <span>Learn More</span>
-                                <ArrowRight size={18} />
+                                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                             </button>
                         </div>
                     ))}

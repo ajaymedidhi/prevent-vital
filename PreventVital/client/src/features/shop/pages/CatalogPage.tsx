@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
+import StoreHero from '../components/StoreHero';
 import { Product } from '@/store/shopSlice';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 const CatalogPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -14,7 +14,6 @@ const CatalogPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
-    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -41,14 +40,10 @@ const CatalogPage = () => {
             result = result.filter(p => p.category.toLowerCase() === activeCategory.toLowerCase().replace(/ /g, '_'));
         }
 
-        if (searchTerm) {
-            result = result.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
-        }
-
         setFilteredProducts(result);
-    }, [activeCategory, searchTerm, products]);
+    }, [activeCategory, products]);
 
-    const categories = ['All', 'Wearables', 'Test Kits', 'Supplements']; // Can be dynamic later
+    const categories = ['All', 'Wearables', 'Test Kits', 'Supplements'];
 
     if (error) {
         return <div className="text-red-500 text-center py-20 bg-red-50 rounded-lg mx-auto max-w-lg mt-10">
@@ -58,75 +53,57 @@ const CatalogPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50/50">
-            <div className="container mx-auto pt-20 pb-10 px-4">
-                {/* FILTERS & SEARCH BAR */}
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 sticky top-[70px] z-30 bg-white/80 backdrop-blur-md p-4 rounded-xl border border-gray-100 shadow-sm">
+        <div className="min-h-screen bg-white">
+            {/* HERO SECTION */}
+            <StoreHero />
 
-                    {/* Category Tabs */}
-                    <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
-                        {categories.map(cat => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${activeCategory === cat
-                                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                                    }`}
-                            >
-                                {cat}
-                            </button>
-                        ))}
+            <div className="container mx-auto pb-20 px-4 md:px-6">
+                {/* FILTER BAR */}
+                <div className="flex items-center gap-4 mb-8 mt-8 overflow-x-auto no-scrollbar pb-2">
+                    <div className="text-gray-400">
+                        <Filter size={20} />
                     </div>
-
-                    {/* Search */}
-                    <div className="relative w-full md:w-[350px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                        <Input
-                            type="text"
-                            placeholder="Search products..."
-                            className="pl-10 h-11 bg-gray-50 border-gray-200 focus:bg-white transition-colors rounded-full"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all shadow-sm border ${activeCategory === cat
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'bg-white text-gray-600 hover:bg-gray-50 border-gray-200'
+                                }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
                 </div>
 
                 {/* PRODUCT GRID */}
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[...Array(8)].map((_, i) => (
                             <div key={i} className="space-y-4">
-                                <Skeleton className="h-[300px] w-full rounded-2xl bg-gray-200" />
-                                <div className="space-y-2">
-                                    <Skeleton className="h-5 w-3/4 bg-gray-200" />
-                                    <Skeleton className="h-4 w-1/2 bg-gray-200" />
-                                </div>
+                                <Skeleton className="h-[300px] w-full rounded-2xl bg-gray-100" />
                             </div>
                         ))}
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filteredProducts.length > 0 ? (
                                 filteredProducts.map((product) => (
-                                    <div key={product._id} className="animate-in fade-in zoom-in-95 duration-500">
+                                    <div key={product._id} className="animate-in fade-in zoom-in-95 duration-500 h-full">
                                         <ProductCard product={product} userRegion={userRegion} />
                                     </div>
                                 ))
                             ) : (
                                 <div className="col-span-full py-24 text-center">
-                                    <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
-                                        <Search size={40} />
-                                    </div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
-                                    <p className="text-gray-500">Try adjusting your search or category filters.</p>
                                     <Button
                                         variant="link"
                                         className="mt-2 text-indigo-600"
-                                        onClick={() => { setSearchTerm(''); setActiveCategory('All'); }}
+                                        onClick={() => setActiveCategory('All')}
                                     >
-                                        Clear all filters
+                                        Clear filters
                                     </Button>
                                 </div>
                             )}
