@@ -43,15 +43,49 @@ const Team = () => {
 
                 <div className="container mx-auto px-4 -mt-16 pb-20 relative z-20 space-y-12">
 
-                    {/* Founder 1: Dr. Sindhura */}
+                    {/* Founder 1: Dr. Rakesh */}
                     <div className="max-w-5xl mx-auto bg-white rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col md:flex-row transform hover:-translate-y-1 transition-transform duration-300">
+                        <div className="md:w-2/5 relative bg-indigo-50 min-h-[320px]">
+                            <img
+                                src="/images/rakesh.webp"
+                                alt="Dr. Rakesh Kumar"
+                                className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/10"></div>
+                            <div className="absolute bottom-4 left-4 text-white md:hidden">
+                                <h3 className="text-2xl font-bold">Dr. Rakesh Kumar</h3>
+                                <p className="opacity-90">Founder & Chairman</p>
+                            </div>
+                        </div>
+                        <div className="md:w-3/5 p-8 md:p-12">
+                            <div className="hidden md:block mb-6">
+                                <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-2">
+                                    Founder & Chairman
+                                </span>
+                                <h3 className="text-3xl font-bold text-gray-900">Dr. Rakesh Kumar</h3>
+                                <p className="text-gray-500 font-medium">MBBS, MD, DNB (Cardiology)</p>
+                            </div>
+
+                            <div className="space-y-4 text-gray-600 leading-relaxed text-sm md:text-base">
+                                <p>
+                                    Dr. Rakesh Kumar is a senior interventional cardiologist with a deep commitment to preventive and precision cardiovascular care. He brings extensive experience in managing complex coronary, structural, and heart failure patients.
+                                </p>
+                                <p>
+                                    He provides strategic direction for AI‑based medical device R&D and preventive cardiology programs. His leadership ensures that every product is grounded in evidence-based medicine, ethical practice, and measurable patient outcomes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Founder 2: Dr. Sindhura */}
+                    <div className="max-w-5xl mx-auto bg-white rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col md:flex-row-reverse transform hover:-translate-y-1 transition-transform duration-300">
                         <div className="md:w-2/5 relative bg-indigo-50 min-h-[320px]">
                             <img
                                 src="/images/sindhura.webp"
                                 alt="Dr. Sindhura Nalluru"
                                 className="absolute inset-0 w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/10"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-l md:from-transparent md:to-black/10"></div>
                             <div className="absolute bottom-4 left-4 text-white md:hidden">
                                 <h3 className="text-2xl font-bold">Dr. Sindhura Nalluru</h3>
                                 <p className="opacity-90">Founder & Managing Director</p>
@@ -72,40 +106,6 @@ const Team = () => {
                                 </p>
                                 <p>
                                     As a clinician–entrepreneur, she leads strategy across AI-based medical device R&D, preventive health platforms, and AI‑enabled wearables. Her leadership emphasizes evidence-based medicine, ethical AI, and regulatory readiness.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Founder 2: Dr. Rakesh */}
-                    <div className="max-w-5xl mx-auto bg-white rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col md:flex-row-reverse transform hover:-translate-y-1 transition-transform duration-300">
-                        <div className="md:w-2/5 relative bg-indigo-50 min-h-[320px]">
-                            <img
-                                src="/images/rakesh.webp"
-                                alt="Dr. Rakesh Kumar"
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-l md:from-transparent md:to-black/10"></div>
-                            <div className="absolute bottom-4 left-4 text-white md:hidden">
-                                <h3 className="text-2xl font-bold">Dr. Rakesh Kumar</h3>
-                                <p className="opacity-90">Founder Chairman</p>
-                            </div>
-                        </div>
-                        <div className="md:w-3/5 p-8 md:p-12">
-                            <div className="hidden md:block mb-6">
-                                <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-2">
-                                    Founder Chairman
-                                </span>
-                                <h3 className="text-3xl font-bold text-gray-900">Dr. Rakesh Kumar</h3>
-                                <p className="text-gray-500 font-medium">MBBS, MD, DNB (Cardiology)</p>
-                            </div>
-
-                            <div className="space-y-4 text-gray-600 leading-relaxed text-sm md:text-base">
-                                <p>
-                                    Dr. Rakesh Kumar is a senior interventional cardiologist with a deep commitment to preventive and precision cardiovascular care. He brings extensive experience in managing complex coronary, structural, and heart failure patients.
-                                </p>
-                                <p>
-                                    He provides strategic direction for AI‑based medical device R&D and preventive cardiology programs. His leadership ensures that every product is grounded in evidence-based medicine, ethical practice, and measurable patient outcomes.
                                 </p>
                             </div>
                         </div>
